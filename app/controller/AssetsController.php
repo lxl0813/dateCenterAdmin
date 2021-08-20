@@ -152,16 +152,16 @@ class AssetsController extends RbacController
             } catch (\Exception $exception) {
                 $this->resultError($exception->getMessage());
             }
-            if ($param['status']==1) {
+            if ($param['status'] == 1) {
                 $status['status'] = 2;
                 $status['use_id'] = $param['use_id'];
                 $status['use_name'] = (new AdminUserModel())->where('id', $param['use_id'])->value('admin_name');
-            }else{
-                $status['status'] = 1 ;
+            } else {
+                $status['status'] = 1;
                 $status['use_id'] = null;
                 $status['use_name'] = null;
             }
-            $param['status'] == 1 ? $status['status'] = 2 : $status['status'] = 1;
+            //$param['status'] == 1 ? $status['status'] = 2 : $status['status'] = 1;
             $param['create_by'] = $this->Cookie['id'];
             $param['create_time'] = time();
             //开启事务
@@ -192,12 +192,12 @@ class AssetsController extends RbacController
         $param = $request->param();
         $fixed_assets_name = "";
         $fixed_assets_info = $this->fixedAssetsUseModel->where($param)->order('create_time desc')->paginate($this->Page)->each(function ($k) use (&$fixed_assets_name, $param) {
-            if ($fixed_assets_name){
+            if ($fixed_assets_name) {
                 $k->fixed_assets_name = $fixed_assets_name;
-            }else{
+            } else {
                 $k->fixed_assets_name = $this->fixedAssetsModel->where('id', $param['fixed_assets_id'])->value('fixed_assets_name');
             }
-            $k->use_name = $this->adminUser->where('id',$k['use_id'])->value('admin_name');
+            $k->use_name = $this->adminUser->where('id', $k['use_id'])->value('admin_name');
         });
         return view('', ['fixed_assets_info' => $fixed_assets_info]);
     }
