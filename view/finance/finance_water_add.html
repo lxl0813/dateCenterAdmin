@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="/static/css/font.css">
+        <link rel="stylesheet" href="/static/css/xadmin.css">
+        <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row">
+                <form class="layui-form" >
+                    <div class="layui-form-item">
+                        <label for="username" class="layui-form-label">
+                            <span class="x-red">*</span>选择日期
+                        </label>
+                        <div class="layui-input-inline layui-show-xs-block">
+                            <input class="layui-input" placeholder="开始日" name="create_time" id="start">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class="x-red">*</span>选择公司
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="company_id" lay-filter="company">
+                                <option value=""></option>
+                                {foreach $finance_company as $key=>$item}
+                                    <option value="{$item.company_id}">{$item.company_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class="x-red">*</span>选择银行账户
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="bank_id" lay-filter="bank">
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item">
+                        <label for="username" class="layui-form-label">
+                            <span class="x-red">*</span>选择科目
+                        </label>
+                        <div class="layui-input-inline layui-show-xs-block">
+                            <a class="subject_select" onclick="xadmin.open('科目选择','{:url("Finance/finance_subject_select")}')">
+                                <button  class="layui-btn" lay-filter="" lay-submit="">点击选择</button>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_email" class="layui-form-label">
+                            <span class="x-red">*</span>流水收支
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="income_pay"  title="收入" value="1">
+                            <input type="radio" name="income_pay"  title="支出" value="2">
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="income_pay_value" required="" lay-verify="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            <span class="x-red">*</span>请选择支出或者收入
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_email" class="layui-form-label">
+                            对方账户
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="other_account"  lay-verify=""  class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_email" class="layui-form-label">
+                            对方开户机构
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="other_open_ac_mec" lay-verify="" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_email" class="layui-form-label">
+                            <span class="x-red">*</span>账户余额
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="account_balance" id="account_balance" required="" lay-verify="" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            <span class="x-red">*</span>该账户余额仅供参考，实际以银行账单为准(选择公司、选择收支类型、输入收支金额后自动计算)
+                        </div>
+                    </div>
+                </form>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                        </label>
+                        <button  class="layui-btn" lay-filter="add" lay-submit="">
+                            增加
+                        </button>
+                    </div>
+            </div>
+        </div>
+        <script>
+            layui.use(['form', 'layer','laydate'], function() {
+                var laydate = layui.laydate;
+                //执行一个laydate实例
+                laydate.render({
+                    elem: '#start' //指定元素
+                });
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+
+                //定义公司
+                var finance_company =   "";
+
+                //监听select
+                form.on('select(company)', function(data){
+                    finance_company =   data.value
+                    //查询银行
+                    $.ajax({
+                        type:"POST",
+                        url:"{:url('Finance/company_find_bank')}",
+                        data:{
+                            company_id:finance_company,
+                        },
+                        dataType:"json",
+                        success:function(result){
+                            if(result.code == 200){
+                                var html    =   "";
+                                $.each(result.data,function (k,v){
+                                    html+="<option value='" + v.bank_id + "'>" + v.bank_name + "</option>";
+                                })
+                                $("#bank_id").html(html);
+                                form.render('select')
+                            }else{
+                                layer.msg(result.message);
+                            }
+                        }
+                    });
+                })
+
+                //计算余额
+                $("input[name=income_pay_value]").blur(function (){
+                    if(finance_company==""){
+                        layer.msg('请选择公司！');return;
+                    }
+                    var nums   =   $(this).val();
+                    if($.isNumeric(nums)==false){
+                        layer.msg('请输入正确的数字');return;
+                    }else{
+                        nums    =   Number(nums).toFixed(2)
+                        $(this).val(nums)
+                    }
+                    if(nums==""){
+                        layer.msg('请输入收支数额！');return;
+                    }
+                    var income_pay_type =   $('input[name="income_pay"]:checked').val();
+                    if(income_pay_type==""){
+                        layer.msg('请选择收支类型！');return;
+                    }
+                    var bank_id         =   $("#bank_id option:checked").val();
+                    if(bank_id==""){
+                        layer.msg('请选择银行账户');return;
+                    }
+                    $.ajax({
+                        type:"POST",
+                        url:"{:url('Finance/finance_account_balance')}",
+                        data:{
+                            company_id:finance_company,
+                            nums:nums,
+                            income_pay_type:income_pay_type,
+                            bank_id:bank_id
+                        },
+                        dataType:"json",
+                        success:function(result){
+                            if(result.code == 200){
+                                $("input[name=account_balance]").val(result.data);
+                            }else{
+                                layer.msg(result.message);
+                            }
+                        }
+                    });
+                })
+
+
+                //表单提交
+                form.on('submit(add)', function(data) {
+                    var create_time                 =   $("input[name=create_time]").val().trim();
+                    var company_id                  =   $("#company_id option:checked").val();
+                    var bank_id                     =   $("#bank_id option:checked").val();
+                    var bank_name                   =   $("#bank_id option:checked").text();
+                    var company_name                =   $("#company_id option:checked").text();
+                    var subject_id                  =   $("#select_subject").attr('name');
+                    var subject_name                =   $("#select_subject").text();
+                    var income_pay                  =   $("input[name=income_pay]:checked").val();
+                    var income_pay_value            =   parseFloat($("input[name=income_pay_value]").val().trim());
+                    var other_account               =   $("input[name=other_account]").val().trim();
+                    var other_open_ac_mec           =   $("input[name=other_open_ac_mec]").val().trim();
+                    var account_balance             =   $("#account_balance").val().trim();
+                    if(create_time=="") {
+                        layer.msg("请选择日期");return;
+                    }
+                    if(company_id==""){
+                        layer.msg("请选择公司");return;
+                    }
+                    if(subject_id==""){
+                        layer.msg("请选择科目");return;
+                    }
+                    if(income_pay==""){
+                        layer.msg("请选择收入或支出");return;
+                    }
+                    if(income_pay_value==""){
+                        layer.msg("请输入收支金额");return;
+                    }
+                    if(bank_id==""){
+                        layer.msg("请选择银行");return;
+                    }
+
+                    //缺少余额计算
+                    if(company_id !="" && income_pay !="" && income_pay_value !="" && account_balance==""){
+                        $.ajax({
+                            type:"POST",
+                            url:"{:url('Finance/finance_account_balance')}",
+                            data:{
+                                company_id:finance_company,
+                                nums:income_pay_value,
+                                income_pay_type:income_pay
+                            },
+                            dataType:"json",
+                            success:function(result){
+                                if(result.code == 200){
+                                    $("input[name=account_balance]").val(result.data);
+                                    account_balance=result.data;
+                                    layer.msg("已为您计算好账户余额,正在为您提交！");
+
+                                }else{
+                                    layer.msg(result.message);
+                                }
+                            }
+                        });
+                    }
+                    setTimeout(function (){
+                        $.ajax({
+                            type:"POST",
+                            url:"{:url('Finance/finance_water_add_do')}",
+                            data:{
+                                create_time:create_time,
+                                company_id:company_id,
+                                company_name:company_name,
+                                subject_id:subject_id,
+                                subject_name:subject_name,
+                                income_pay:income_pay,
+                                income_pay_value:income_pay_value,
+                                other_account:other_account,
+                                other_open_ac_mec:other_open_ac_mec,
+                                account_balance:account_balance,
+                                bank_id:bank_id,
+                                bank_name:bank_name
+                            },
+                            dataType:"json",
+                            success:function(result){
+                                console.log(result);
+                                if(result.code == 200){
+                                    layer.msg(result.message);
+                                    setTimeout(function (){
+                                        xadmin.close();
+                                        xadmin.father_reload();
+                                    },1000)
+
+                                }else{
+                                    layer.msg(result.message);
+                                }
+                            }
+                        });
+                    },1000)
+                });
+            });
+
+            //子页面向父级页面传值
+            function getSingleSonData(single_ids) {
+                var length  =   $(".subject_select").prev().length;
+                var html    =   "<span class='layui-badge layui-bg-gray' style='margin-top: 8px' id='select_subject' name=" + single_ids.id + ">" + single_ids.title + "</span>"
+                if(length>0){
+                    $(".subject_select").prev().replaceWith(html)
+                }else{
+                    $(".subject_select").before(html);
+                }
+            }
+        </script>
+    </body>
+</html>

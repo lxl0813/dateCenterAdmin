@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="/static/css/font.css">
+        <link rel="stylesheet" href="/static/css/xadmin.css">
+        <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    </head>
+    
+    <body>
+        <div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">演示</a>
+                <a>
+                    <cite>导航元素</cite></a>
+            </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+            </a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <div class="layui-inline">
+                                    <div class="layui-input-inline">
+                                        <select name="modules"  lay-search="">
+                                            <option value="">设置交易手数</option>
+                                            {foreach $traders_nums as $key=>$item}
+                                                <option value="{$item.id}">{$item.traders_nums}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <select name="a_probability"  lay-search="">
+                                            <option value="">设置A概率</option>
+                                            {foreach $probability['a_probability'] as $key=>$item}
+                                                <option value="{$item.id}">{$item.probability}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <select name="y_probability"  lay-search="">
+                                            <option value="">设置Y概率</option>
+                                            {foreach $probability['y_probability'] as $key=>$item}
+                                                <option value="{$item.id}">{$item.probability}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <select name="x_probability"  lay-search="">
+                                            <option value="">设置X概率</option>
+                                            {foreach $probability['x_probability'] as $key=>$item}
+                                                <option value="{$item.id}">{$item.probability}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <select name="basic_funds" lay-search="">
+                                            <option value="">股票基础资金量</option>
+                                            {foreach $basic_funds as $key=>$item}
+                                                <option value="{$item.id}">{$item.basic_funds}</option>
+                                            {/foreach}
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <select name="is_cv" lay-search="">
+                                            <option value="">计算CV值</option>
+                                            <option value="1">计算</option>
+                                            <option value="2">不计算</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-input-inline layui-show-xs-block">
+                                    <a class="layui-btn" onclick="count_to_excel(this,'{$shares_id}')" lay-submit="" lay-filter="sreach">
+                                        <i class="layui-icon">&#xe601;</i>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-header">
+                            <p style="color: red">请选择交易手数、A概率、Y概率、X概率后，并选择是否根据该天过滤后的股票信息计算CV值。点击按钮，系统自行计算生成EXCEL文件下载。不选择则按照系统配置计算。</p>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width:0px">序号</th>
+                                        <th style="min-width:30px">日期</th>
+                                        <th style="min-width:25px">股票代码</th>
+                                        <th style="min-width:40px">名称</th>
+                                        <th style="min-width:20px">A概率</th>
+                                        <th style="min-width:20px">Y概率</th>
+                                        <th style="min-width:20px">X概率</th>
+                                        <th style="min-width:60px">A平均根</th>
+                                        <th style="min-width:60px">A平均值</th>
+                                        <th style="min-width:60px">Y平均根</th>
+                                        <th style="min-width:60px">Y平均值</th>
+                                        <th style="min-width:60px">X平均根</th>
+                                        <th style="min-width:60px">X平均值</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {foreach $shares_datas as $key=>$item}
+                                        <tr>
+                                            <td style="min-width:0px">{$key+1}</td>
+                                            <td style="min-width:30px">{$item.create_time}</td>
+                                            <td style="min-width:25px">{$item.shares_code}</td>
+                                            <td style="min-width:40px">{$item.shares_name}</td>
+                                            <td style="min-width:20px">{$item.a_probability*100}%</td>
+                                            <td style="min-width:20px">{$item.y_probability*100}%</td>
+                                            <td style="min-width:20px">{$item.x_probability*100}%</td>
+                                            <td style="min-width:60px">{$item.a_sqrt}</td>
+                                            <td style="min-width:60px">{$item.a_avg}</td>
+                                            <td style="min-width:60px">{$item.y_sqrt}</td>
+                                            <td style="min-width:60px">{$item.y_avg}</td>
+                                            <td style="min-width:60px">{$item.x_sqrt}</td>
+                                            <td style="min-width:60px">{$item.x_avg}</td>
+                                        </tr>
+                                    {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="layui-card-body ">
+
+                        <div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        layui.use(['laydate', 'form'],
+        function() {
+        });
+
+
+        /*计算导出*/
+        function count_to_excel(obj,id) {
+            var traders_nums    =   $('select[name=traders_nums] option:selected').text();
+            var a_probability   =   $('select[name=a_probability] option:selected').text();
+            var y_probability   =   $('select[name=y_probability] option:selected').text();
+            var x_probability   =   $('select[name=x_probability] option:selected').text();
+            var is_cv           =   $('select[name=is_cv] option:selected').val();
+            var basic_funds     =   $('select[name=basic_funds] option:selected').text();
+            if(traders_nums=="设置交易手数"){
+                traders_nums="";
+            }
+            if(a_probability=="设置A概率"){
+                a_probability="";
+            }
+            if(y_probability=="设置Y概率"){
+                y_probability="";
+            }
+            if(x_probability=="设置X概率"){
+                x_probability="";
+            }
+            if(is_cv=="计算CV值"){
+                is_cv="";
+            }
+            if(basic_funds=="股票基础资金量"){
+                basic_funds="";
+            }
+            layer.confirm('确认计算并导出该日股票数据？',
+                function(index) {
+                    //发异步删除数据
+                    $.ajax({
+                        type:"POST",
+                        url:"{:url('SharesData/shares_count_to_excel')}",
+                        data:{
+                            shares_id:id,
+                            traders_nums:traders_nums,
+                            a_probability:a_probability,
+                            y_probability:y_probability,
+                            x_probability:x_probability,
+                            is_cv:is_cv,
+                            basic_funds:basic_funds
+                        },
+                        dataType:"json",
+                        beforeSend: function() {
+                            layer.load(1, {
+                                shade: [0.1,'#fff'] //0.1透明度的白色背景
+                            });
+                        },
+                        success:function(result){
+                            if(result.code == 200){
+                                layer.closeAll('loading'); //关闭loading
+                                layer.msg(result.message);
+                                setTimeout(function () {
+                                    window.location.href = result.data;
+                                },1000)
+                            }else{
+                                layer.closeAll('loading'); //关闭loading
+                                layer.msg(res.message);
+                            }
+                        },
+                    });
+                }
+            );
+        }
+    </script>
+
+</html>

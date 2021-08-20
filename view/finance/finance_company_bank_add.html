@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <meta name="csrf-token" content="{:token()}">
+        <link rel="stylesheet" href="/static/css/font.css">
+        <link rel="stylesheet" href="/static/css/xadmin.css">
+        <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row">
+                <form class="layui-form">
+                   <!-- <div class="layui-form-item">
+                        <label for="username" class="layui-form-label">
+                            <span class="x-red">*</span>公司名称
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="company_name" required="" lay-verify="required"
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="phone" class="layui-form-label">
+                            <span class="x-red">*</span>联系方式
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="company_mobile" required="" lay-verify="phone"
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div> -->
+                    <div class="layui-form-item">
+                        <label for="L_address" class="layui-form-label">
+                            <span class="x-red">*</span>银行名称
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"  name="bank_name" required="" lay-verify=""
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                            <span class="x-red">*</span>账户初始值
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="init_account_balance" required="" lay-verify=""
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                            <span class="x-red">*</span>开户行地址
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="bank_address" required="" lay-verify=""
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                            <span class="x-red">*</span>账户名称
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="bank_account_name" required="" lay-verify=""
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                            <span class="x-red">*</span>银行账户
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="bank_account" required="" lay-verify=""
+                            autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+              </form>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label"></label>
+                    <button  class="layui-btn" lay-filter="add" lay-submit="">确认添加</button>
+                </div>
+            </div>
+			<input type="text" id="company_id" hidden value="{$company_id}">
+        </div>
+        <script>layui.use(['form', 'layer'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+                //监听提交
+                form.on('submit(add)', function(data) {
+                    // var company_name                =   $("input[name=company_name]").val().trim();
+                    // var company_mobile              =   $("input[name=company_mobile]").val().trim();
+                    // var company_address             =   $("input[name=company_address]").val().trim();
+                    var bank_account        =   $("input[name=bank_account]").val().trim();
+                    var bank_account_name   =   $("input[name=bank_account_name]").val().trim();
+                    var bank_address        =   $("input[name=bank_address]").val().trim();
+					var bank_name			=	$("input[name=bank_name]").val().trim();
+					var init_account_balance	=	$("input[name=init_account_balance]").val();
+					var company_id					=	$("#company_id").val();
+                    //var company_credit_code         =   $("input[name=company_credit_code]").val().trim();
+                    $.ajax({
+                        type:"POST",
+                        url:"{:url('Finance/finance_company_bank_add_do')}",
+                        data:{
+                            // company_name:company_name,
+                            // company_mobile:company_mobile,
+                            // company_address:company_address,
+							company_id:company_id,
+                            bank_account:bank_account,
+                            bank_account_name:bank_account_name,
+                            bank_address:bank_address,
+							bank_name:bank_name,
+							init_account_balance:init_account_balance
+                            //company_credit_code:company_credit_code
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        dataType:"json",
+                        success:function(result){
+                            console.log(result);
+                            if(result.code == 200){
+                                layer.msg(result.message);
+                                setTimeout(function () {
+                                    xadmin.close();
+                                    xadmin.father_reload();
+                                },1000)
+
+                            }else{
+                                layer.msg(result.message);
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </body>
+
+</html>

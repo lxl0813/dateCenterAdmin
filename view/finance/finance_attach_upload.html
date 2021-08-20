@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <meta name="csrf-token" content="{:token()}">
+        <link rel="stylesheet" href="/static/css/font.css">
+        <link rel="stylesheet" href="/static/css/xadmin.css">
+        <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <input type="text" id="water_id" value="{$water_id}" hidden>
+            <div class="layui-row">
+                <form class="layui-form">
+                    <div class="layui-form-item">
+                        <label for="username" class="layui-form-label">
+                            <span class="x-red"></span>发票：
+                        </label>
+                        <div class="layui-upload-drag" id="invoice">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                            <div class="" id="invoice_url">
+                                <hr>
+                                {if !empty($attach_list['invoice'])}
+                                    {foreach $attach_list['invoice'] as $key=>$item}
+                                        <img src="{$item}" alt="" class="layui-upload-img" width="200px" height="100px">
+                                    {/foreach}
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="phone" class="layui-form-label">
+                            <span class="x-red"></span>银行回单：
+                        </label>
+                        <div class="layui-upload-drag" id="bank_receipt">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                            <div class="" id="uploadDemoView">
+                                <div class="layui-upload">
+                                    <div class="layui-upload-list">
+                                        <table class="layui-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>文件名</th>
+                                                    <th>状态</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="demoList1">
+                                                {if !empty($attach_list['bank_receipt'])}
+                                                    {foreach $attach_list['bank_receipt'] as $key=>$item}
+                                                    <tr id="upload-'+ index +'">
+                                                        <td>{:strrchr($item,'/')}</td>
+                                                        <td>上传成功</td>
+                                                    </tr>
+                                                    {/foreach}
+                                                {/if}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_address" class="layui-form-label">
+                            <span class="x-red"></span>收据：
+                        </label>
+                        <div class="layui-upload-drag" id="receipt">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                            <div class="" id="receipt_url">
+                                <hr>
+                                {if !empty($attach_list['receipt'])}
+                                    {foreach $attach_list['receipt'] as $key=>$item}
+                                        <img src="{$item}" alt="" class="layui-upload-img" width="200px" height="100px">
+                                    {/foreach}
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                            <span class="x-red"></span>开票通知：
+                        </label>
+                        <div class="layui-upload-drag" id="invoice_notice">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                            <div class="layui-hide" id="invoice_notice_url">
+                                <hr>
+                                {if !empty($attach_list['invoice_notice'])}
+                                    {foreach $attach_list['invoice_notice'] as $key=>$item}
+                                        <img src="{$item}" alt="" class="layui-upload-img" width="200px" height="100px">
+                                    {/foreach}
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">
+                            <span class="x-red"></span>其他附件：
+                        </label>
+                        <div class="layui-upload-drag" id="more_attach">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                            <div class="" id="uploadDemoView">
+                                <div class="layui-upload">
+                                    <div class="layui-upload-list">
+                                        <table class="layui-table">
+                                            <thead>
+                                            <tr>
+                                                <th>文件名</th>
+                                                <th>状态</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="demoList">
+                                                {if !empty($attach_list['more_attach'])}
+                                                    {foreach $attach_list['more_attach'] as $key=>$item}
+                                                        <tr id="upload-'+ index +'">
+                                                            <td>{:strrchr($item,'/')}</td>
+                                                            <td>上传成功</td>
+                                                        </tr>
+                                                    {/foreach}
+                                                {/if}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label"></label>
+                    <button  class="layui-btn" lay-filter="add" lay-submit="">确认添加</button>
+                </div>
+            </div>
+        </div>
+        <script>layui.use(['form', 'layer','upload'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer,
+                upload = layui.upload;
+
+                var water_id    =   $("#water_id").val();
+
+                //发票
+                upload.render({
+                    elem: '#invoice',
+                    url: '{:url("Finance/finance_attach_upload_do")}', //改成您自己的上传接口,
+                    data: {
+                        attach_type:'invoice_url',
+                        water_id:water_id
+                    },
+                    before: function(obj){
+                        obj.preview(function(index, file, result){
+                            layui.$('#invoice_url').removeClass('layui-hide').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" width="200px" height="100px">')
+                        });
+                    },
+                    done: function(result){
+                        if(result.code==200){
+                            layer.msg(result.message)
+                        }else{
+                            layer.msg(result.message)
+                            setTimeout(function (){
+                                layui.$('#invoice_url img:last').remove();
+                            },1000)
+                        }
+                    }
+                });
+
+
+                //银行回单
+                upload.render({
+                    elem: '#bank_receipt',
+                    accept:'file',
+                    exts:'pdf',
+                    size:'1024',
+                    url: '{:url("Finance/finance_attach_upload_do")}', //改成您自己的上传接口,
+                    data: {
+                        attach_type:'bank_receipt_url',
+                        water_id:water_id
+                    },
+                    choose: function(obj){
+                        var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                        //读取本地文件
+                        obj.preview(function(index, file, result){
+                            var tr = $(['<tr id="upload-'+ index +'">',
+                                '<td>'+ file.name +'</td>',
+                                '<td>正在上传</td>',
+                                '</tr>'].join(''));
+                            //删除
+                            tr.find('.demo-delete').on('click', function(){
+                                delete files[index]; //删除对应的文件
+                                tr.remove();
+                                uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                            });
+                            $('#demoList1').append(tr);
+                        });
+                    },
+                    done: function(res, index, upload){
+                        if(res.code=="200"){ //上传成功
+                            var tr = $('#demoList1').find('tr#upload-'+ index)
+                                ,tds = tr.children();
+                            tds.eq(1).html('<span style="color: #5FB878;">上传成功</span>');
+                            return delete this.files[index]; //删除文件队列已经上传成功的文件
+                        }
+                        this.error(index, upload);
+                    }
+                });
+
+                //收据
+                upload.render({
+                    elem: '#receipt',
+                    url: '{:url("Finance/finance_attach_upload_do")}', //改成您自己的上传接口,
+                    multiple: true,
+                    size:'1024',
+                    data: {
+                        attach_type:'receipt_url',
+                        water_id:water_id
+                    },
+                    before: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function(index, file, result){
+                            layui.$('#receipt_url').removeClass('layui-hide').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img">')
+                        });
+                    },
+                    done: function(result){
+                        if(result.code==200){
+                            layer.msg(result.message)
+                        }else{
+                            layer.msg(result.message)
+                            setTimeout(function (){
+                                layui.$('#receipt_url img:last').remove();
+                            },1000)
+                        }
+                    }
+                });
+
+                //开票通知
+                upload.render({
+                    elem: '#invoice_notice',
+                    url: '{:url("Finance/finance_attach_upload_do")}',
+                    multiple: true,
+                    size:'1024',
+                    data: {
+                        attach_type:'invoice_notice_url',
+                        water_id:water_id
+                    },
+                    before: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function(index, file, result){
+                            layui.$('#invoice_notice_url').removeClass('layui-hide').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img">')
+                        });
+                    },
+                    done: function(result){
+                        if(result.code==200){
+                            layer.msg(result.message)
+                        }else{
+                            layer.msg(result.message)
+                            setTimeout(function (){
+                                layui.$('#invoice_notice_url img:last').remove();
+                            },1000)
+                        }
+                    }
+                });
+
+
+                //其他附件
+                upload.render({
+                    elem: '#more_attach',
+                    url: '{:url("Finance/finance_attach_upload_do")}',
+                    accept:'file',
+                    size:'3072',
+                    exts:'pdf',
+                    data: {
+                        attach_type:'more_attach_url',
+                        water_id:water_id
+                    },
+                    choose: function(obj){
+                        var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                        //读取本地文件
+                        obj.preview(function(index, file, result){
+                            var tr = $(['<tr id="upload-'+ index +'">',
+                                '<td>'+ file.name +'</td>',
+                                '<td>正在上传</td>',
+                                '</tr>'].join(''));
+                            //删除
+                            tr.find('.demo-delete').on('click', function(){
+                                delete files[index]; //删除对应的文件
+                                tr.remove();
+                                uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                            });
+                            $('#demoList').append(tr);
+                        });
+                    },
+                    done: function(res, index, upload){
+                        if(res.code=="200"){ //上传成功
+                            var tr = $('#demoList').find('tr#upload-'+ index)
+                                ,tds = tr.children();
+                            tds.eq(1).html('<span style="color: #5FB878;">上传成功</span>');
+                            return delete this.files[index]; //删除文件队列已经上传成功的文件
+                        }
+                        this.error(index, upload);
+                    }
+                });
+
+            });
+        </script>
+
+    </body>
+
+</html>

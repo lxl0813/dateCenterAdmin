@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns="http://www.w3.org/1999/html">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>让雷数据中心后台管理</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+        <link rel="stylesheet" href="/static/css/font.css">
+        <link rel="stylesheet" href="/static/css/xadmin.css">
+        <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    </head>
+    
+    <body>
+        <div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">演示</a>
+                <a><cite>导航元素</cite></a>
+            </span>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+                <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+            </a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <div class="layui-input-inline layui-show-xs-block">
+                                    <select name="admin_sex">
+                                        <option value="">性别</option>
+                                        <option value="1">男</option>
+                                        <option value="2">女</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline layui-show-xs-block">
+                                    <select name="admin_status">
+                                        <option value="">账号状态</option>
+                                        <option value="1">正常</option>
+                                        <option value="2">冻结</option>
+                                    </select>
+                                </div>
+<!--                                <div class="layui-input-inline layui-show-xs-block">-->
+<!--                                    <select name="">-->
+<!--                                        <option value="">部门</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                                <div class="layui-input-inline layui-show-xs-block">-->
+<!--                                    <select name="income_pay">-->
+<!--                                        <option value="">岗位</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+                                <div class="layui-input-inline layui-show-xs-block">
+                                    <button class="layui-btn" lay-submit="" lay-filter="sreach">
+                                        <i class="layui-icon">&#xe615;</i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-header">
+                            <button class="layui-btn" onclick="xadmin.open('添加管理员','{:url("SystemAdmin/system_admin_add")}',800,600)">
+                            <i class="layui-icon"></i>添加
+                            </button>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 10px">序号</th>
+                                        <th>管理员</th>
+                                        <th>管理员姓名</th>
+                                        <th style="min-width: 10px">性别</th>
+                                        <th style="min-width: 40px">手机号码</th>
+                                        <th>邮箱</th>
+                                        <th style="min-width: 10px">年龄</th>
+                                        <th>角色</th>
+                                        <th>添加日期</th>
+                                        <th>上次登录</th>
+                                        <th>状态</th>
+                                        <th>部门</th>
+                                        <th>岗位</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {foreach $system_admin_list as $key=>$item}
+                                        <tr>
+                                            <td style="min-width: 10px">{$key+1}</td>
+                                            <td>{$item.admin_account}</td>
+                                            <td>{$item.admin_name}</td>
+                                            <td style="min-width: 10px">{$item.admin_sex}</td>
+                                            <td style="min-width: 40px">{$item.admin_mobile}</td>
+                                            <td>{$item.admin_email}</td>
+                                            <td style="min-width: 10px">{$item.admin_birthday}</td>
+                                            <td>
+                                                {foreach $item.role as $k=>$v}
+                                                    {$v}<br>
+                                                {/foreach}
+                                            </td>
+                                            <td>{$item.create_time}</td>
+                                            <td>{:date('Y-m-d H:i:s',$item.last_login_time)}</td>
+                                            <td>
+                                                <input type="checkbox" name="switch" value="{$item.id}" lay-skin="switch" lay-text="正常|冻结" lay-filter="switchAdminStatus" {if $item.admin_status=="1"} checked="" {/if} >
+                                            </td>
+                                            <td>{$item.admin_class}</td>
+                                            <td>{$item.admin_job}</td>
+                                            <td class="td-manage">
+                                                <a title="编辑" onclick="xadmin.open('管理员编辑','{:url('SystemAdmin/system_admin_edit',['id'=>$item.id])}')" href="javascript:;">
+                                                    <i class="layui-icon" style="font-size: 25px;">&#xe642;</i>
+                                                </a>
+                                                <a title="删除" onclick="shares_delete(this,'{$item.id}')" href="javascript:;">
+                                                    <i class="layui-icon" style="font-size: 25px;">&#xe640;</i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        layui.use(['laydate', 'form'],function() {
+            var laydate = layui.laydate;
+            var form    = layui.form;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#end' //指定元素
+            });
+
+            //管理员状态开关监控
+            form.on('switch(switchAdminStatus)', function(data){
+                var admin_status    =   "";
+                var id              =   $(this).val()
+                if(data.elem.checked==false){
+                    admin_status = 2;
+                }else {
+                    admin_status = 1;
+                }
+                $.ajax({
+                    type:"POST",
+                    url:"{:url('SystemAdmin/system_admin_status_edit')}",
+                    data:{
+                        admin_status:admin_status,
+                        id:id
+                    },
+                    dataType:"json",
+                    success:function(result){
+                        if(result.code == 200){
+                            layer.msg(result.message);
+                            setTimeout(function () {
+                                //关闭当前frame
+                                xadmin.close();
+                                // 可以对父窗口进行刷新
+                                xadmin.father_reload();
+                            },1000)
+                        }else{
+                            layer.msg(result.message);
+                            setTimeout(function () {
+                                //关闭当前frame
+                                xadmin.close();
+                                // 可以对父窗口进行刷新
+                                xadmin.father_reload();
+                            },5000)
+                        }
+                    }
+                });
+            })
+        });
+
+        /*管理员-删除*/
+        function shares_delete(obj, id) {
+            layer.confirm('确认要删除吗？',
+            function(index) {
+                $(obj).parents("tr").remove();
+                //发异步删除数据
+                $.ajax({
+                    type:"POST",
+                    url:"{:url('SystemAdmin/system_admin_delete')}",
+                    data:{
+                        id:id,
+                    },
+                    dataType:"json",
+                    success:function(result){
+                        if(result.code == 200){
+                            layer.msg(result.message);
+                            setTimeout(function () {
+                                window.location.reload();
+                            },1000)
+                        }else{
+                            layer.msg(result.message);
+                            setTimeout(function () {
+                                window.location.reload();
+                            },1000)
+                        }
+                    }
+                });
+            });
+        }
+
+
+
+    </script>
+
+</html>
