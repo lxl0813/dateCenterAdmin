@@ -152,11 +152,18 @@ class AssetsController extends RbacController
             } catch (\Exception $exception) {
                 $this->resultError($exception->getMessage());
             }
+            if ($param['status']==1) {
+                $status['status'] = 2;
+                $status['use_id'] = $param['use_id'];
+                $status['use_name'] = (new AdminUserModel())->where('id', $param['use_id'])->value('admin_name');
+            }else{
+                $status['status'] = 1 ;
+                $status['use_id'] = null;
+                $status['use_name'] = null;
+            }
             $param['status'] == 1 ? $status['status'] = 2 : $status['status'] = 1;
             $param['create_by'] = $this->Cookie['id'];
             $param['create_time'] = time();
-            $status['use_id'] = $param['use_id'];
-            $status['use_name'] = (new AdminUserModel())->where('id', $param['use_id'])->value('admin_name');
             //开启事务
             Db::startTrans();
             try {
