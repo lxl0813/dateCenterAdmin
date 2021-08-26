@@ -6,6 +6,7 @@ namespace app\controller;
 
 use app\model\AdminRolesModel;
 use app\model\AdminUserModel;
+use app\model\CustomBankInfoModel;
 use app\model\CustomContactModel;
 use app\model\CustomModel;
 use app\model\NodesModel;
@@ -88,7 +89,6 @@ class CustomController extends RbacController
                 $k->admin_account = [];
             }
         });
-        //dump($custom_list);exit;
         return view('', ['custom_list' => $custom_list]);
     }
 
@@ -110,7 +110,6 @@ class CustomController extends RbacController
             $param['create_time'] = $param['update_time'] = time();
             $param['create_by'] = $this->Cookie['id'];
             unset($param['contact_name'], $param['contact_phone']);
-            //dump($param);exit;
             try {
                 $this->CustomModel->save($param);
                 $this->resultSuccess();
@@ -137,10 +136,8 @@ class CustomController extends RbacController
             return view('', ['admin_list' => $admin_list, 'custom_info' => $custom_info]);
         }
 
-
         if ($request->isPost()) {
             $param = $request->param();
-            //dump($param);exit;
             try {
                 $this->CustomModel->where('id', $param['id'])->save(['admin_id' => $param['admin_id']]);
                 $this->resultSuccess();
@@ -148,8 +145,6 @@ class CustomController extends RbacController
                 $this->resultError($exception->getMessage());
             }
         }
-
-
     }
 
 
@@ -173,7 +168,7 @@ class CustomController extends RbacController
                 //状态获取器
                 $k->contact_type = $k->contact_type_status;
             });
-            return view('', ['custom_contact_list' => $custom_contact_list,'custom_id'=>$param['custom_id']]);
+            return view('', ['custom_contact_list' => $custom_contact_list, 'custom_id' => $param['custom_id']]);
         }
 
         if ($request->isPost()) {
@@ -195,28 +190,99 @@ class CustomController extends RbacController
         if ($request->isGet()) {
             $custom_id = $request->param('custom_id');
             //查询客户联系人
-            $contact_action = $this->CustomModel->where('id',$custom_id)->find()->contact_action;
-            //dump($contact_action);exit;
-            return view('',['custom_id'=>$custom_id,'contact_action'=>$contact_action]);
+            $contact_action = $this->CustomModel->where('id', $custom_id)->find()->contact_action;
+            return view('', ['custom_id' => $custom_id, 'contact_action' => $contact_action]);
         }
 
         if ($request->isPost()) {
             $param = $request->param();
-
-            $admin_id = $this->CustomModel->where('id',$param['custom_id'])->value('admin_id');
-            if($admin_id==0){
-                $this->resultError('该客户暂未分配，请分配后操作！');return;
+            $admin_id = $this->CustomModel->where('id', $param['custom_id'])->value('admin_id');
+            if ($admin_id == 0) {
+                $this->resultError('该客户暂未分配，请分配后操作！');
+                return;
             }
-            $param['admin_id'] = CustomModel::where('id',$param['custom_id'])->value('admin_id');
-            //dump($param['admin_id']);exit;
-            $param['create_time']= date('Y-m-d H:i:s',time());
+            $param['admin_id'] = CustomModel::where('id', $param['custom_id'])->value('admin_id');
+            $param['create_time'] = date('Y-m-d H:i:s', time());
             try {
                 $this->CustomContactModel->save($param);
                 $this->resultSuccess();
-            }catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 $this->resultError($exception->getMessage());
             }
         }
+    }
+
+
+    /**
+     * 客户银行信息列表
+     * @param Request $request
+     * @return \think\response\View
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function custom_bank_list(Request $request)
+    {
+        $param = $request->param();
+        $custom_bank = (new CustomBankInfoModel())->where($param)->select()->each(function ($k){
+            $k->custom_name = $this->CustomModel->where('id',$k['custom_id'])->value('custom_name');
+        });
+        return view('', ['custom_bank_list' => $custom_bank,'custom_id'=>$param['custom_id']]);
+    }
+
+
+    /**
+     * 客户银行添加
+     * @param Request $request
+     * @return \think\response\View
+     */
+    public function custom_bank_add(Request $request)
+    {
+        if ($request->isGet()) {
+            $param = $request->param();
+            return view('',['custom_id'=>$param['custom_id']]);
+        }
+
+        if ($request->isPost()) {
+            $param = $request->param();
+            $param['create_by'] = $this->Cookie['id'];
+            $param['create_time'] = time();
+            $param['update_time'] = time();
+            $result = (new CustomBankInfoModel())->insert($param);
+            if ($result) {
+                $this->resultSuccess();
+            }else{
+                $this->resultError();
+            }
+        }
+    }
+
+
+    /**
+     * 客户银行信息删除
+     * @param Request $request
+     */
+    public function custom_bank_delete(Request $request)
+    {
+        $param = $request->param();
+        try{
+            (new CustomBankInfoModel())->where($param)->delete();
+            $this->resultSuccess();
+        }catch(\Exception $exception){
+            $this->resultError($exception->getMessage());
+        }
+    }
+
+    /**
+     * 客户查找银行信息
+     * @param Request $request
+     */
+    public function custom_to_bank(Request $request)
+    {
+        $param = $request->param();
+        $custom_bank = (new CustomBankInfoModel())->where($param)->select()->toArray();
+        //dump($custom_bank);exit;
+        $this->resultSuccess('成功！',['custom_bank'=>$custom_bank]);
     }
 
 

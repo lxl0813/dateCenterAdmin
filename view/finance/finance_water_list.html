@@ -53,14 +53,6 @@
                                     </select>
                                 </div>
 
-                                <div class="layui-input-inline layui-show-xs-block">
-                                    <select name="company_id">
-                                        <option value="">选择公司</option>
-                                        {foreach $finance_company as $key=>$item}
-                                            <option value="{$item.company_id}">{$item.company_name}</option>
-                                        {/foreach}
-                                    </select>
-                                </div>
 
                                 <div class="layui-input-inline layui-show-xs-block">
                                     <select name="income_pay">
@@ -114,7 +106,7 @@
                                         <tr>
                                             <td style="min-width:30px">{$item.water_id}</td>
                                             <td style="min-width:20px">{$item.create_time}</td>
-                                            <td style="min-width:20px">{$item.company_name}</td>
+                                            <td style="min-width:20px">上海让雷智能科技有限公司</td>
                                             <td style="min-width:20px">{$item.bank_name}</td>
                                             <td style="min-width:auto">{$item.subject_name}</td>
                                             <td style="color: red">{$item.water_pay}</td>

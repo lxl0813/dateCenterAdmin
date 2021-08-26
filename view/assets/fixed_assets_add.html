@@ -168,9 +168,13 @@
                         if (result.code==200){
                             $("#load").removeAttr("hidden");
                             element.progress('load', '100%');
+                            layer.msg('上传成功！');
                             setTimeout(function () {
-                                layer.msg('上传成功！');
-                            },500)
+                                //关闭当前frame
+                                xadmin.close();
+                                // 可以对父窗口进行刷新
+                                xadmin.father_reload();
+                            },1000)
                         }
                     },
                 });

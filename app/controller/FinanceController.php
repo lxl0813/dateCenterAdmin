@@ -374,7 +374,7 @@ class FinanceController extends RbacController
         $income_pay     =   $request->get('income_pay','');
         $create_by      =   $request->get('create_by','');
         $other_account  =   $request->get('other_account','');
-        $company_id     =   $request->get('company_id','');
+        //$company_id     =   $request->get('company_id','');
         //定义查询条件数组
         $queryWhere     =   [];
         if($start_time && $end_time){
@@ -399,9 +399,7 @@ class FinanceController extends RbacController
         if($other_account){
             $queryWhere['other_account']        =   array('other_account','=',$other_account);
         }
-        if($company_id){
-            $queryWhere['company_id']           =   array('company_id','=',$company_id);
-        }
+
 
         $page       =   SystemSettingsModel::where('system_name','分页设置')->value('system_value');
         $water_list =   FinanceWaterModel::where($queryWhere)->order('add_time')->paginate(['list_rows'=>$page,'query'=>request()->param()])->each(function ($key,$item){
@@ -485,7 +483,7 @@ class FinanceController extends RbacController
         }
         $recursion      =   new RecursionService();
         $subject_list   =   $recursion->subject_tree($subject_arr);
-       
+       //dump($subject_list);exit;
 		return view('',['subject_list'=>$subject_list]);
     }
 

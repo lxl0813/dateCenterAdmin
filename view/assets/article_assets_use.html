@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="/static/css/font.css">
+        <link rel="stylesheet" href="/static/css/xadmin.css">
+        <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/static/js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]--></head>
+    
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row">
+                <form class="layui-form">
+
+                    <div class="layui-form-item">
+                        <label for="L_email" class="layui-form-label">
+                            <span class="x-red">*</span>物品名称
+                        </label>
+                        <div class="layui-input-inline">
+                            <input class="layui-input" placeholder="输入物品名称" id="article_assets_name" disabled value="{$article_assets.article_assets_name}">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>物品型号
+                        </label>
+                        <div class="layui-input-inline">
+                            <input class="layui-input" placeholder="输入物品型号" id="article_assets_model" disabled value="{$article_assets.article_assets_model}">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>采购单价
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="pur_unit_price" placeholder="输入物品采购单价" disabled class="layui-input" value="{$article_assets.pur_unit_price/100}">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>销售单价
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="sales_unit_price"  placeholder="输入物品销售单价" disabled class="layui-input" value="{$article_assets.sales_unit_price/100}">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>计量单位
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="unit"  placeholder="输入物品计量单位" disabled class="layui-input" value="{$article_assets.unit}">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            数量余额
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"   placeholder="余额" disabled class="layui-input" value="{$article_assets.stock}">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>领用日期
+                        </label>
+                        <div class="layui-input-inline">
+                            <input class="layui-input" placeholder="输入物品型号" id="add_time">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>领用数量
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text"  id="article_assets_num"  placeholder="输入物品入库数量" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            备注
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="remark" placeholder="输入备注信息（选填）" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            对方单位
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="company" lay-filter="aihao">
+                                {foreach $custom_list as $key=>$item}
+                                <option value="{$item.id}">{$item.custom_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            归属项目
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="project" lay-filter="aihao">
+                                {foreach $project_list as $key=>$item}
+                                <option value="{$item.id}">{$item.project_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            归属部门
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="department" lay-filter="aihao">
+                                {foreach $department_list as $key=>$item}
+                                <option value="{$item.id}">{$item.department_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>经办人
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="handler_id" lay-filter="aihao">
+                                {foreach $admin_list as $key=>$item}
+                                <option value="{$item.id}">{$item.admin_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            附件图片
+                        </label>
+                        <div class="layui-upload">
+                            <button type="button" class="layui-btn" id="test1">上传图片</button>
+                            <div class="layui-upload-li  st" style="margin-left: 110px;margin-top: 10px">
+                                <img class="layui-upload-img" id="img" >
+                                <p id="demoText"></p>
+                            </div>
+                            <div style="width: 70px;margin-left: 110px;margin-top: 10px" hidden id="load">
+                                <div class="layui-progress layui-progress-big" lay-showpercent="yes" lay-filter="load">
+                                    <div class="layui-progress-bar" lay-percent=""></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" id="button" class="layui-btn" lay-submit lay-filter="add">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            layui.use(['laydate','form', 'layer','upload'], function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                    layer = layui.layer,
+                    upload = layui.upload
+                var laydate = layui.laydate;
+                //执行一个laydate实例
+                laydate.render({
+                    elem: '#add_time' //指定元素
+                });
+
+                var uploadInst = upload.render({
+                    elem: '#test1',
+                    exts:"jpg|png|gif|bmp|jpeg",
+                    auto:false,
+                    bindAction:'#button',
+                    size:5120,
+                    accept:'images',
+                    data: {
+                        article_assets_name: function(){
+                            return $('#article_assets_name').val();
+                        },
+                        article_assets_model:function () {
+                            return $("#article_assets_model").val();
+                        },
+                        pur_unit_price:function () {
+                            return $("#pur_unit_price").val();
+                        },
+                        sales_unit_price:function () {
+                            return $("#sales_unit_price").val();
+                        },
+                        unit:function () {
+                            return $("#unit").val();
+                        },
+                        add_time:function () {
+                            return $("#add_time").val();
+                        },
+                        stock:function () {
+                            return $("#article_assets_num").val();
+                        },
+                        remark:function () {
+                            return $("#remark").val();
+                        },
+                        company_id:function () {
+                            return $("#company").val();
+                        },
+                        project_id:function () {
+                            return $("#project").val();
+                        },
+                        department_id:function () {
+                            return $("#department").val();
+                        },
+                        handler_id:function () {
+                            return $("#handler_id").val();
+                        },
+                    },
+                    url: "{:url('Assets/article_assets_add')}",
+                    before: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function(index, file, result){
+                            $('#img').attr('src', result); //图片链接（base64）
+                            $('#img').attr('width', '100px');
+                            $('#img').attr('height', '100px');
+                        });
+                        element.progress('load', '0%'); //进度条复位
+                        layer.msg('上传中', {icon: 16, time: 0});
+                    },
+                    done: function(result){
+                        if (result.code==200){
+                            $("#load").removeAttr("hidden");
+                            element.progress('load', '100%');
+                            setTimeout(function () {
+                                layer.msg('上传成功！');
+                            },500)
+                        }
+                    },
+                });
+            });
+        </script>
+    </body>
+
+</html>

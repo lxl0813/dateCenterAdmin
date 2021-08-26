@@ -28,6 +28,24 @@ class AssetsAddValidate extends Validate
         'status' => 'require',
         'use_time' => 'require|date',
         'fixed_assets_id' => 'require',
+
+        //物品资产添加
+        "article_assets_name" => "require",
+        "article_assets_model" => "require",
+        "pur_unit_price" => "require",
+        "sales_unit_price" => "require",
+        "unit" => "require",
+        "add_time" => "require",
+        "handler_id" => "require",
+
+
+        //物品资产添加时要加入流水时需要的验证
+        "custom_id" => "require",
+        "custom_bank_id" => "require",
+        "subject_id" => "require",
+        "subject_name" => "require",
+        "bank_id" => "require",
+
     ];
 
     /**
@@ -52,7 +70,21 @@ class AssetsAddValidate extends Validate
         'id' => '固定资产不能为空',
         'status' => '领用状态不能为空',
 
+        //物品资产
+        "article_assets_name.require" => "物品资产名称不能为空",
+        "article_assets_model.require" => "物品型号不能为空",
+        "pur_unit_price" => "采购单价不能为空",
+        "sales_unit_price" => "销售单价不能为空",
+        "unit.require" => "物品单位不能为空",
+        "add_time.require" => "入库时间不能为空",
+        "handler_id" => "经办人不能为空",
 
+        //物品资产添加时加入流水单
+        "custom_id.require" => "客户公司不能为空",
+        "custom_bank_id.require" => "客户银行不能为空",
+        "subject_id.require" => "科目不能为空",
+        "subject_name.require" => "科目名称不能为空",
+        "bank_id.require" => "我方支付银行不能为空",
     ];
 
 
@@ -61,7 +93,9 @@ class AssetsAddValidate extends Validate
      * @var \string[][]
      */
     protected $scene = [
-        'fixed_assets_add'  =>  ['fixed_assets_name','purchase_time','purchase_money','use_life','residuals_rate'],
-        'fixed_assets_use' => ['use_id','use_time','id','status'],
+        'fixed_assets_add' => ['fixed_assets_name', 'purchase_time', 'purchase_money', 'use_life', 'residuals_rate'],
+        'fixed_assets_use' => ['use_id', 'use_time', 'id', 'status'],
+        'article_assets_add' => ['article_assets_name', 'article_assets_model', 'pur_unit_price', 'sales_unit_price', 'unit', 'add_time', 'handler_id'],
+        'article_assets_water' => ['custom_id','custom_bank_id','subject_id','bank_id'],
     ];
 }
