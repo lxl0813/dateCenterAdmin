@@ -16,7 +16,7 @@ trait ResultTrait
         //$data   =   json_encode(["code"=>$code,"success"=>$success,"message"=>$message,"data"=>$data]);
         //dump($data);exit;
         //Response::create($data, 'json',200)->header(["content-type:text/html; charset=utf-8"]);
-        echo  json_encode(["code"=>$code,"success"=>$success,"message"=>$message,"data"=>$data],200);return;
+        echo  json_encode(["code"=>$code,"success"=>$success,"message"=>$message,"data"=>$data],200);
     }
 
 
@@ -29,6 +29,6 @@ trait ResultTrait
     {
         //$data   =   ["code"=>$code,"success"=>$success,"message"=>$message];
         //Response::create($data, 'json')->code(500)->header(["content-type:text/html; charset=utf-8"]);
-        echo  json_encode(["code"=>$code,"success"=>$success,"message"=>$message],500);return;
+        echo  json_encode(["code"=>$code,"success"=>$success,"message"=>$message],500);
     }
 }

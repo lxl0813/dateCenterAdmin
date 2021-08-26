@@ -80,7 +80,7 @@
                             <span class="x-red">*</span>领用日期
                         </label>
                         <div class="layui-input-inline">
-                            <input class="layui-input" placeholder="输入物品型号" id="add_time">
+                            <input class="layui-input" placeholder="输入领用日期" id="add_time">
                         </div>
                     </div>
 
@@ -102,17 +102,23 @@
                         </div>
                     </div>
 
-                    <div class="layui-form-item">
+                    <div class="layui-form-item" id="company_list">
                         <label for="L_username" class="layui-form-label">
-                            对方单位
+                            <span class="x-red">*</span>对方单位
                         </label>
                         <div class="layui-input-block" style="width: 190px">
-                            <select id="company" lay-filter="aihao">
+                            <select id="company" lay-filter="custom">
+                                <option value="">选择客户单位</option>
                                 {foreach $custom_list as $key=>$item}
                                 <option value="{$item.id}">{$item.custom_name}</option>
                                 {/foreach}
                             </select>
                         </div>
+                    </div>
+
+                    <div class="layui-form-item" id="custom_bank">
+
+
                     </div>
 
                     <div class="layui-form-item">
@@ -151,6 +157,41 @@
                                 <option value="{$item.id}">{$item.admin_name}</option>
                                 {/foreach}
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            <span class="x-red">*</span>计入收入
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="pay" value="1" title="是" checked="" lay-filter="erweima">
+                            <input type="radio" name="pay" value="2" title="否" lay-filter="erweima">
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item" id="bank">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>收入银行账户
+                        </label>
+                        <div class="layui-input-block" style="width: 190px">
+                            <select id="bank_id" lay-filter="aihao">
+                                {foreach $bank as $key=>$item}
+                                <option value="{$item.bank_id}">{$item.bank_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" id="subject">
+                        <label for="username" class="layui-form-label">
+                            <span class="x-red">*</span>选择科目
+                        </label>
+                        <div class="layui-input-inline layui-show-xs-block">
+                            <a class="subject_select" onclick="xadmin.open('科目选择','{:url("Finance/finance_subject_select")}')">
+                            <button type="button"  class="layui-btn" lay-filter="" lay-submit="">点击选择</button>
+                            </a>
                         </div>
                     </div>
 
@@ -219,13 +260,13 @@
                         add_time:function () {
                             return $("#add_time").val();
                         },
-                        stock:function () {
+                        article_assets_num:function () {
                             return $("#article_assets_num").val();
                         },
                         remark:function () {
                             return $("#remark").val();
                         },
-                        company_id:function () {
+                        custom_id:function () {
                             return $("#company").val();
                         },
                         project_id:function () {
@@ -237,8 +278,23 @@
                         handler_id:function () {
                             return $("#handler_id").val();
                         },
+                        pay:function () {
+                            return $("input:radio[name=pay]:checked").val()
+                        },
+                        subject_id:function () {
+                            return $("#select_subject").attr('name');
+                        },
+                        subject_name:function () {
+                            return $("#select_subject").text();
+                        },
+                        bank_id:function () {
+                            return $("#bank_id option:checked").val();
+                        },
+                        custom_bank_id:function () {
+                            return $("#custom_bank option:checked").val()
+                        }
                     },
-                    url: "{:url('Assets/article_assets_add')}",
+                    url: "{:url('Assets/article_assets_use')}",
                     before: function(obj){
                         //预读本地文件示例，不支持ie8
                         obj.preview(function(index, file, result){
@@ -253,13 +309,77 @@
                         if (result.code==200){
                             $("#load").removeAttr("hidden");
                             element.progress('load', '100%');
+                            layer.msg('上传成功！');
                             setTimeout(function () {
-                                layer.msg('上传成功！');
-                            },500)
+                                //关闭当前frame
+                                xadmin.close();
+                                // 可以对父窗口进行刷新
+                                xadmin.father_reload();
+                            },1000)
+                        } else {
+                            layer.msg(result.message);
                         }
                     },
                 });
+
+                //单选框效果
+                form.on('radio(erweima)', function(data) {
+                    //alert(data.value); //判断单选框的选中值
+                    //此处判断
+                    //console.log(data.value)
+                    if (data.value==2){
+                        $("#bank").hide();
+                        $("#subject").hide();
+                    }else {
+                        $("#bank").show();
+                        $("#subject").show();
+                    }
+                });
+
+
+                //根据所选客户单位，查找对应的银行账户信息
+                form.on('select(custom)', function (data) {
+                    $.ajax({
+                        type:"POST",
+                        url:"{:url('Custom/custom_to_bank')}",
+                        data: {
+                            custom_id:data.value
+                        },
+                        dataType:"json",
+                        success:function(result){
+                            if(result.code == 200){
+                                //查询成功
+                                var html = "";
+                                html    +=  "<div class=\"layui-form-item\" id='custom_bank'>";
+                                html    +=  "<label for=\"L_username\" class=\"layui-form-label\">";
+                                html    +=  "<span class=\"x-red\">*</span>银行信息</label>";
+                                html    +=  "<div class=\"layui-input-block\" style=\"width: 190px\">";
+                                html    +=  "<select id=\"custom_bank\" lay-filter=\"bank\">";
+                                $.each(result.data.custom_bank , function (k , v) {
+                                    html    +=  "<option value='" + v.id + "'>"+ v.custom_bank +"</option>";
+                                })
+                                html    +=  "</select></div></div>";
+                                $("#custom_bank").replaceWith(html);
+                                form.render();
+                            }else{
+                                layer.msg(result.message);
+                            }
+                        }
+                    });
+                })
             });
+
+
+            //子页面向父级页面传值
+            function getSingleSonData(single_ids) {
+                var length  =   $(".subject_select").prev().length;
+                var html    =   "<span class='layui-badge layui-bg-gray' style='margin-top: 8px' id='select_subject' name=" + single_ids.id + ">" + single_ids.title + "</span>"
+                if(length>0){
+                    $(".subject_select").prev().replaceWith(html)
+                }else{
+                    $(".subject_select").before(html);
+                }
+            }
         </script>
     </body>
 

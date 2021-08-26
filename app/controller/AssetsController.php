@@ -385,7 +385,7 @@ class AssetsController extends RbacController
      */
     public function article_assets_use(Request $request)
     {
-        if ($request->param()) {
+        if ($request->isGet()) {
             $param = $request->param();
             $article_assets = $this->articleAssetsModel->where($param)->find();
             $project_list = (new ProjectModel())->where('status', 1)->select()->toArray();
@@ -395,48 +395,123 @@ class AssetsController extends RbacController
             $custom_lidt = (new CustomModel())->select()->toArray();
             //人员查询
             $admin_list = (new AdminUserModel())->where('admin_status', 1)->select()->toArray();
-            return view('', ['article_assets' => $article_assets, 'project_list' => $project_list, 'department_list' => $department_list, 'custom_list' => $custom_lidt, 'admin_list' => $admin_list]);
+            $bank = (new FinanceCompanyBankModel())->select()->toArray();
+            return view('', ['bank'=>$bank , 'article_assets' => $article_assets, 'project_list' => $project_list, 'department_list' => $department_list, 'custom_list' => $custom_lidt, 'admin_list' => $admin_list]);
         }
 
-        if ($request->param()) {
+        if ($request->isPost()) {
             $param = $request->param();
-            try {
-                validate(AssetsAddValidate::class)->scene('article_assets_use')->batch(true)->check($param);
-            } catch (\Exception $exception) {
-                $this->resultError($exception->getMessage());
-            }
+//            try {
+//                validate(AssetsAddValidate::class)->scene('article_assets_use')->batch(true)->check($param);
+//            } catch (\Exception $exception) {
+//                $this->resultError($exception->getMessage());
+//            }
+            $article = $this->articleAssetsModel->where(
+                [
+                    'article_assets_name' => $param['article_assets_name'],
+                    'article_assets_model' => $param['article_assets_model'],
+                ])->field('stock,id')->find();
 
-            $article_assets_info['article_assets_num'] = $param['stock'];
+            if ($param['article_assets_num'] > $article['stock']) {
+               return $this->resultError('物品库存不足！请减少领用量');
+            }
+            $param['pur_unit_price'] = $param['pur_unit_price'] * 100;
+            $param['sales_unit_price'] = $param['sales_unit_price'] * 100;
+            $article_assets_info['article_assets_num'] = $param['article_assets_num'];
             $article_assets_info['handler_id'] = $param['handler_id'];
             unset($param['handler_id']);
-            $article_assets_info['create_by'] = $this->Cookie['id'];
+            $article_assets_info['create_by'] = $param['create_by'] = $this->Cookie['id'];
             $article_assets_info['create_time'] = time();
             $article_assets_info['add_time'] = $param['add_time'];
-            $article_assets_info['company_name'] = $param['add_time'];
-            $article_assets_info['company_id'] = $param['add_time'] ?: null;
-            $article_assets_info['department_id'] = $param['add_time'] ?: null;
-            $article_assets_info['project_id'] = $param['add_time'] ?: null;
+            unset($param['add_time']);
+            $article_assets_info['company_id'] = $param['custom_id'] ?: null;
+            $article_assets_info['department_id'] = $param['department_id'] ?: null;
+            unset($param['department_id']);
+            $article_assets_info['project_id'] = $param['project_id'] ?: null;
+            unset($param['project_id']);
+            $article_assets_info['remark'] = $param['remark'] ?: null;
+            unset($param['remark']);
             $article_assets_info['status'] = 2;
+            $article_assets_info['article_assets_id'] = $article['id'];
+
+            //dump($article_assets_info);exit;
+            if ($param['pay'] == 1) {
+//                try {
+//                    validate(AssetsAddValidate::class)->scene('article_assets_water')->batch(true)->check($param);
+//                } catch (\Exception $exception) {
+//                    $this->resultError($exception->getMessage());
+//                }
+                $water['water_info'] = $param['article_assets_name'] . $param['article_assets_model'] . "销售" . $param['article_assets_num'] . $param['unit'];
+                $water['water_income'] = $param['sales_unit_price'] * $param['article_assets_num'] / 100;
+                //查询该银行账户流水表余额
+                $balance = (new FinanceWaterModel())->where('bank_id', $param['bank_id'])->order('create_time desc')->limit(1)->value('account_balance');
+                //如果没有，查询银行账户余额
+                if (!$balance) {
+                    $water['account_balance'] = (((new FinanceCompanyBankModel())->where('bank_id', $param['bank_id'])->value('account_balance') * 100) + ($water['water_income'] * 100)) / 100;
+                } else {
+                    $water['account_balance'] = ($balance * 100 + $water['water_income'] * 100) / 100;
+                }
+                $water['other_account'] = (new CustomModel())->where('id', $param['custom_id'])->value('custom_name');
+                $water['other_open_ac_mec'] = (new CustomBankInfoModel())->where('id', $param['custom_bank_id'])->value('custom_open_ac_mec');
+                $water['status'] = 1;
+                $water['create_time'] = date("Y-m-d", $article_assets_info['create_time']);
+                $water['update_time'] = $water['create_time'];
+                $water['create_by'] = $this->Cookie['id'];
+                $water['subject_id'] = $param['subject_id'];
+                $water['create_admin'] = $this->Cookie['admin_name'];
+                $water['add_time'] = date("Y-m-d H:i:s", time());
+                $water['subject_name'] = $param['subject_name'];
+                $water['bank_id'] = $param['bank_id'];
+                $water['bank_name'] = (new FinanceCompanyBankModel())->where('bank_id', $water['bank_id'])->value('bank_name');
+                $water['project_id'] = $article_assets_info['project_id'];
+                $water['department_id'] = $article_assets_info['department_id'];
+                $water['handler_id'] = $article_assets_info['handler_id'];
+            }
+            unset($param['pay']);
+            unset($param['custom_bank_id']);
+            unset($param['custom_id']);
+            unset($param['subject_id']);
+            unset($param['subject_name']);
+            unset($param['bank_id']);
+
+            //dump($param);dump($article_assets_info);dump($water);exit;
             //附件上传
             $savename = Filesystem::disk('public')->putFile('assets_file', $request->file('file'));
             if (!$savename) {
                 throw new \think\Exception('图片上传失败！请重试！');
-                return;
             }
             $article_assets_info['annex'] = Filesystem::getDiskConfig('public', 'url') . '/' . str_replace('\\', '/', $savename);
             Db::startTrans();
             try {
                 Db::connect('dataMysql')->name('article_assets_inout')->insert($article_assets_info);
-                Db::connect('dataMysql')->name('article_assets')->where(['id' => $param['article_assets_id']])->update(['stock' => "stock-" . $param['article_assets_num']]);
+                Db::connect('dataMysql')->name('article_assets')->where([
+                    'article_assets_name' => $param['article_assets_name'],
+                    'article_assets_model' => $param['article_assets_model'],
+                ])->update(['stock' => $article['stock']-$param['article_assets_num']]);
                 // 提交事务
                 Db::commit();
-                $this->resultSuccess();
             } catch (\Exception $exception) {
                 // 回滚事务
                 Db::rollback();
                 unlink("." . $article_assets_info['annex']);
-                $this->resultError($exception->getMessage());
+                return $this->resultError($exception->getMessage());
             }
+
+            if (isset($water)) {
+                Db::startTrans();
+                try {
+                    Db::connect("financeMysql")->table('rl_finance_water')->insert($water);
+                    Db::connect("financeMysql")->table('rl_finance_company_bank')->where('bank_id', $water['bank_id'])->update(['account_balance' => $water['account_balance']]);
+                    // 提交事务
+                    Db::commit();
+                    return $this->resultSuccess();
+                } catch (\Exception $exception) {
+                    // 回滚事务
+                    Db::rollback();
+                    return $this->resultError($exception->getMessage());
+                }
+            }
+            return $this->resultSuccess();
         }
     }
 
