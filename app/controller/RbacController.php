@@ -22,11 +22,6 @@ class RbacController extends BaseController
     public function __construct(App $app)
     {
         parent::__construct($app);
-
-//        if (!Cookie::get('DATACENTER_ADMIN')) {
-//            return redirect('/Auth/data_center_login')->send();exit;
-//        }
-
         //管理员权限识别
         if (!$this->checkNode()) {
             if (request()->isAjax()) {
@@ -119,7 +114,6 @@ class RbacController extends BaseController
         //对菜单进行递归处理
         $recursion = new RecursionService();
         $menu_list = $recursion->nodes_recursion_son($menu);
-        //dump($menu_list);exit;
         return $menu_list;
     }
 }

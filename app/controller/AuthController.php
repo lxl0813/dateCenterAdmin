@@ -37,7 +37,7 @@ class AuthController
              return $this->resultError('Token令牌失效！请刷新页面再次尝试！');
          }
         $data= json_decode($request->post('form_data'),true);
-        //var_dump($data);exit;
+
         try {
             //表单内容验证
             validate(DataCenterLoginInValidate::class)->batch(true)->check($data);

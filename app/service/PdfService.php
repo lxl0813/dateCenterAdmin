@@ -25,7 +25,6 @@ class PdfService
         $pdf->SetKeywords('TCPDF, PDF, PHP');
 
         // $PDF_MARGIN_TOP = 30;//留给页眉的空间
-
         // $pdf->SetMargins(20, $PDF_MARGIN_TOP, 20);
         // //设置页头内容
         // $pdf->SetHeaderData(PDF_HEADER_LOGO,PDF_HEADER_LOGO_WIDTH, "福布云商", "https://www.chinafibermarketing.cn");

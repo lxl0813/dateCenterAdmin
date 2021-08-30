@@ -55,11 +55,7 @@ class IndexController extends RbacController
         return Db::connect('productsMysql')->name('company_info')->count();
     }
 
-    //股票数据
-//    public function shares_data()
-//    {
-//        return Db::connect('sharesMysql')->name('fiber_company')->count();
-//    }
+
 
 
 }

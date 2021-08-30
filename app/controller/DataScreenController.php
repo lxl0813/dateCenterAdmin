@@ -28,21 +28,6 @@ class DataScreenController extends RbacController
     //数据录入列表页面
     public function data_entry_list_view()
     {
-//        $a=[];
-//        $b=null;
-//        $c=[];
-//        foreach ($a as $k=>$v)
-//        {
-//            if($b!=null){
-//                $c[]=sprintf("%.2f",($v-$b)/(($v+$b)/2));
-//                $b=$v;
-//            }else{
-//                $b=$v;
-//            }
-//        }
-//        var_dump(sprintf("%.2f",array_sum($c)/count($c)));exit;
-
-
         //根据当前管理员获取当前管理员所管理的模块，找对应的平台
         $where = [
             'admin_id' => json_decode(Cookie::get('DATACENTER_ADMIN'), true)['id'],

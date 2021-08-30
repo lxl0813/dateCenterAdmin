@@ -147,7 +147,6 @@ class ProjectController extends RbacController
             $param['start_time'] = strtotime($param['start_time']);
             $param['end_time'] = strtotime($param['end_time']);
             $param['create_by'] = json_decode(Cookie::get('DATACENTER_ADMIN'), true)['id'];
-            //dump($param);exit;
             try {
                 $this->Project->insert($param);
                 $this->resultSuccess();

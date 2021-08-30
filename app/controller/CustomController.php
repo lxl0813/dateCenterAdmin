@@ -281,7 +281,6 @@ class CustomController extends RbacController
     {
         $param = $request->param();
         $custom_bank = (new CustomBankInfoModel())->where($param)->select()->toArray();
-        //dump($custom_bank);exit;
         $this->resultSuccess('成功！',['custom_bank'=>$custom_bank]);
     }
 

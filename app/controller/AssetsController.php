@@ -343,8 +343,6 @@ class AssetsController extends RbacController
             }
             $article_assets_info['annex'] = Filesystem::getDiskConfig('public', 'url') . '/' . str_replace('\\', '/', $savename);
 
-            //dump($param);dump($article_assets_info);exit;
-
             Db::startTrans();
             try {
                 $article_assets_info['article_assets_id'] = Db::connect('dataMysql')->name('article_assets')->insertGetId($param);
@@ -434,7 +432,6 @@ class AssetsController extends RbacController
             $article_assets_info['status'] = 2;
             $article_assets_info['article_assets_id'] = $article['id'];
 
-            //dump($article_assets_info);exit;
             if ($param['pay'] == 1) {
 //                try {
 //                    validate(AssetsAddValidate::class)->scene('article_assets_water')->batch(true)->check($param);
@@ -474,7 +471,6 @@ class AssetsController extends RbacController
             unset($param['subject_name']);
             unset($param['bank_id']);
 
-            //dump($param);dump($article_assets_info);dump($water);exit;
             //附件上传
             $savename = Filesystem::disk('public')->putFile('assets_file', $request->file('file'));
             if (!$savename) {

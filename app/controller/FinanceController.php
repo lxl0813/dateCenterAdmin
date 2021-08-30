@@ -501,7 +501,6 @@ class FinanceController extends RbacController
         }
         $recursion = new RecursionService();
         $subject_list = $recursion->subject_tree($subject_arr);
-        //dump($subject_list);exit;
         return view('', ['subject_list' => $subject_list]);
     }
 
@@ -911,9 +910,7 @@ class FinanceController extends RbacController
                         $result = Db::connect('financeMysql')->execute($sql);
                         $this->resultSuccess('修改成功');
                         return;
-
                     }
-
                 }
 
                 //传的是支出的情况下
@@ -929,7 +926,6 @@ class FinanceController extends RbacController
                         unset($param['income_pay_value']);
                         unset($param['income_pay']);
                         FinanceWaterModel::where($where)->update($param);
-
                         //修改现在流水公司银行后续的流水信息
                         $sql = "UPDATE rl_finance_water SET account_balance=account_balance+$value WHERE company_id= $company_id and bank_id= $bank_id and add_time > '$add_time'";
                         $result = Db::connect('financeMysql')->execute($sql);
@@ -951,8 +947,6 @@ class FinanceController extends RbacController
                         $sql = "UPDATE rl_finance_water SET account_balance=account_balance-$value WHERE company_id= $this_company_id and bank_id= $this_bank_id and add_time > '$add_time'";
                         $result = Db::connect('financeMysql')->execute($sql);
                         return $this->resultSuccess('修改成功');
-                        return;
-
                     }
                 }
             }
