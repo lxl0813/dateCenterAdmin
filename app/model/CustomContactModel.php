@@ -11,9 +11,9 @@ class CustomContactModel extends Model
     //客户联系记录表
 
     //指定连接的数据库
-    protected $connection   =   'dataMysql';
+    protected $connection = 'dataMysql';
     //模型设置后缀后，指定数据表
-    protected $name         =   'custom_contact';
+    protected $name = 'custom_contact';
 
 
     /**
@@ -35,9 +35,9 @@ class CustomContactModel extends Model
      * @param $data
      * @return string
      */
-    public function getContactTypeStatusAttr($value,$data)
+    public function getContactTypeStatusAttr($value, $data)
     {
-        $status = [1=>'电话',2=>'见面',3=>'微信',4=>'QQ',5=>'邮件',6=>'其他'];
+        $status = [1 => '电话', 2 => '见面', 3 => '微信', 4 => 'QQ', 5 => '邮件', 6 => '其他'];
         return $status[$data['status']];
     }
 }

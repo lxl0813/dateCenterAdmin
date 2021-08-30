@@ -21,15 +21,14 @@ class SystemController extends RbacController
      */
     public function system_roles_list(Request $request)
     {
-        $system_roles_list      =   RolesModel::select()->toArray();
-        foreach ($system_roles_list as $key=>$item){
-            $rolenode   =   RolesNodesModel::where('roles_id',$item['id'])->select()->toArray();
-            foreach ($rolenode as $k=>$v)
-            {
-                $system_roles_list[$key]['nodes_list'][]   =   NodesModel::where('id',$v['nodes_id'])->find()?NodesModel::where('id',$v['nodes_id'])->find()->toArray():[];
+        $system_roles_list = RolesModel::select()->toArray();
+        foreach ($system_roles_list as $key => $item) {
+            $rolenode = RolesNodesModel::where('roles_id', $item['id'])->select()->toArray();
+            foreach ($rolenode as $k => $v) {
+                $system_roles_list[$key]['nodes_list'][] = NodesModel::where('id', $v['nodes_id'])->find() ? NodesModel::where('id', $v['nodes_id'])->find()->toArray() : [];
             }
         }
-        return view('',['system_roles_list'=>$system_roles_list]);
+        return view('', ['system_roles_list' => $system_roles_list]);
     }
 
     /**
@@ -38,8 +37,8 @@ class SystemController extends RbacController
     public function system_roles_add(Request $request)
     {
         //查询权限
-        $nodes_list =   NodesModel::select()->toArray();
-        return view('',['nodes_list'=>$nodes_list]);
+        $nodes_list = NodesModel::select()->toArray();
+        return view('', ['nodes_list' => $nodes_list]);
     }
 
 
@@ -48,18 +47,17 @@ class SystemController extends RbacController
      */
     public function node_tree()
     {
-        $nodes_list  =   NodesModel::select()->toArray();
-        foreach ($nodes_list as $key=>$item)
-        {
-            $nodes_arr[$key]['title']         =    $item['node_name']. "【" . $item['node_controller']."/".$item['node_action'] ."】";
-            $nodes_arr[$key]['id']            =    $item['id'];
-            $nodes_arr[$key]['field']         =    '';
-            $nodes_arr[$key]['parents_id']    =    $item['parents_id'];
-            $nodes_arr[$key]['disabled']      =    $item['status']==1?false:true;
+        $nodes_list = NodesModel::select()->toArray();
+        foreach ($nodes_list as $key => $item) {
+            $nodes_arr[$key]['title'] = $item['node_name'] . "【" . $item['node_controller'] . "/" . $item['node_action'] . "】";
+            $nodes_arr[$key]['id'] = $item['id'];
+            $nodes_arr[$key]['field'] = '';
+            $nodes_arr[$key]['parents_id'] = $item['parents_id'];
+            $nodes_arr[$key]['disabled'] = $item['status'] == 1 ? false : true;
         }
-        $recursion  =   new RecursionService();
-        $nodes_list =   $recursion->nodes_recursion_son($nodes_arr);
-        $this->resultSuccess('成功',$nodes_list);
+        $recursion = new RecursionService();
+        $nodes_list = $recursion->nodes_recursion_son($nodes_arr);
+        $this->resultSuccess('成功', $nodes_list);
     }
 
     /**
@@ -70,49 +68,50 @@ class SystemController extends RbacController
         //获取Token令牌
         $check = $request->checkToken('__token__');
         //令牌验证
-        if(false === $check) {
+        if (false === $check) {
             return $this->resultError('Token令牌失效！');
         }
 
-        $role_name      =   $request->post('role_name','');
-        $role_remarks   =   $request->post('role_remarks','');
-        $node_list      =   $request->post('node_list','');
-        if($role_name==""){
+        $role_name = $request->post('role_name', '');
+        $role_remarks = $request->post('role_remarks', '');
+        $node_list = $request->post('node_list', '');
+        if ($role_name == "") {
             $this->resultError('角色名称不存在！');
         }
-        if($node_list==""){
+        if ($node_list == "") {
             $this->resultError('请勾选权限！');
         }
-        $node_list  =   explode(',',$node_list);
-        $role_insert    =   [
-                                'role_name'     =>  $role_name,
-                                'role_remarks'  =>  $role_remarks,
-                                'create_time'   =>  date('Y-m-d H:i:s',time()),
-                                'update_time'   =>  date('Y-m-d H:i:s',time()),
-                                'create_by'     =>  json_decode(Cookie::get('DATACENTER_ADMIN'),true)['id'],
-                            ];
+        $node_list = explode(',', $node_list);
+        $role_insert = [
+            'role_name' => $role_name,
+            'role_remarks' => $role_remarks,
+            'create_time' => date('Y-m-d H:i:s', time()),
+            'update_time' => date('Y-m-d H:i:s', time()),
+            'create_by' => json_decode(Cookie::get('DATACENTER_ADMIN'), true)['id'],
+        ];
         // 启动事务
         Db::startTrans();
         try {
-            $role_id    =   RolesModel::insertGetId($role_insert);
-            foreach ($node_list as $key=>$item)
-            {
-                $role_node_list[]   =   [
-                                            'roles_id'      =>  $role_id,
-                                            'nodes_id'      =>  $item,
-                                            'create_time'   =>  date('Y-m-d H:i:s',time()),
-                                            'update_time'   =>  date('Y-m-d H:i:s',time()),
-                                            'create_by'     =>  json_decode(Cookie::get('DATACENTER_ADMIN'),true)['id'],
-                                        ];
+            $role_id = RolesModel::insertGetId($role_insert);
+            foreach ($node_list as $key => $item) {
+                $role_node_list[] = [
+                    'roles_id' => $role_id,
+                    'nodes_id' => $item,
+                    'create_time' => date('Y-m-d H:i:s', time()),
+                    'update_time' => date('Y-m-d H:i:s', time()),
+                    'create_by' => json_decode(Cookie::get('DATACENTER_ADMIN'), true)['id'],
+                ];
             }
             RolesNodesModel::insertAll($role_node_list);
             // 提交事务
             Db::commit();
-            $this->resultSuccess('角色创建成功！');return;
+            $this->resultSuccess('角色创建成功！');
+            return;
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            $this->resultError($e->getMessage());return;
+            $this->resultError($e->getMessage());
+            return;
         }
 
     }
@@ -142,14 +141,12 @@ class SystemController extends RbacController
     }
 
 
-
     public function system_nodes_list()
     {
-        $nodes_list =   NodesModel::select();
+        $nodes_list = NodesModel::select();
 
 
     }
-
 
 
 }

@@ -12,9 +12,9 @@ class DepartmentModel extends Model
     //部门表
 
     //指定连接的数据库
-    protected $connection   =   'dataMysql';
+    protected $connection = 'dataMysql';
     //模型设置后缀后，指定数据表
-    protected $name         =   'department';
+    protected $name = 'department';
 
     /**
      * 查询所有部门
@@ -24,9 +24,9 @@ class DepartmentModel extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function selects(array $where=null,string $order=null)
+    public static function selects(array $where = null, string $order = null)
     {
-        $result    =   self::where($where)->order($order)->select()->toArray();
+        $result = self::where($where)->order($order)->select()->toArray();
         //dump($result);exit;
         return $result;
     }
@@ -37,9 +37,9 @@ class DepartmentModel extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function finds(array $where=null)
+    public static function finds(array $where = null)
     {
-        $result =   self::where($where)->find();
+        $result = self::where($where)->find();
         return $result;
     }
 

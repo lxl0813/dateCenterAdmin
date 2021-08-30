@@ -396,7 +396,7 @@ class AssetsController extends RbacController
             //人员查询
             $admin_list = (new AdminUserModel())->where('admin_status', 1)->select()->toArray();
             $bank = (new FinanceCompanyBankModel())->select()->toArray();
-            return view('', ['bank'=>$bank , 'article_assets' => $article_assets, 'project_list' => $project_list, 'department_list' => $department_list, 'custom_list' => $custom_lidt, 'admin_list' => $admin_list]);
+            return view('', ['bank' => $bank, 'article_assets' => $article_assets, 'project_list' => $project_list, 'department_list' => $department_list, 'custom_list' => $custom_lidt, 'admin_list' => $admin_list]);
         }
 
         if ($request->isPost()) {
@@ -413,7 +413,7 @@ class AssetsController extends RbacController
                 ])->field('stock,id')->find();
 
             if ($param['article_assets_num'] > $article['stock']) {
-               return $this->resultError('物品库存不足！请减少领用量');
+                return $this->resultError('物品库存不足！请减少领用量');
             }
             $param['pur_unit_price'] = $param['pur_unit_price'] * 100;
             $param['sales_unit_price'] = $param['sales_unit_price'] * 100;
@@ -487,7 +487,7 @@ class AssetsController extends RbacController
                 Db::connect('dataMysql')->name('article_assets')->where([
                     'article_assets_name' => $param['article_assets_name'],
                     'article_assets_model' => $param['article_assets_model'],
-                ])->update(['stock' => $article['stock']-$param['article_assets_num']]);
+                ])->update(['stock' => $article['stock'] - $param['article_assets_num']]);
                 // 提交事务
                 Db::commit();
             } catch (\Exception $exception) {

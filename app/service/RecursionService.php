@@ -165,4 +165,37 @@ class RecursionService
         return $cateOrder;
     }
 
+
+
+    /**
+     * 将数据集转换成Tree//前端有特殊要求无法通用
+     * @param array $list 要转换的数据集
+     * @param string $pk 主键
+     * @param string $pid 父级id
+     * @param string $child 子代key名称
+     * @param string $root 返回的根节点ID
+     */
+    function make_tree1($list, $pk = 'id', $pid = 'pid', $child = 'children', $root = 0)
+    {
+        $tree = array();
+        foreach ($list as $key => $val) {
+            $val['children'] = [];//前端要求
+            if ($val[$pid] == $root) {
+                //获取当前$pid所有子类
+                unset($list[$key]);
+                if (!empty($list)) {
+                    $child = $this->make_tree1($list, $pk, $pid, $child, $val[$pk]);
+                    if (!empty($child)) {
+                        $val['children'] = $child;
+                    }
+                }
+                $tree[] = $val;
+            }
+        }
+        return $tree;
+    }
+
+
+
+
 }

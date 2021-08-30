@@ -8,9 +8,9 @@ class AdminUserModel extends Model
     //管理员用户表
 
     //指定连接的数据库
-    protected $connection   =   'dataMysql';
+    protected $connection = 'dataMysql';
     //模型设置后缀后，指定数据表
-    protected $name         =   'admin_user';
+    protected $name = 'admin_user';
 
     //admin账号搜索器
     public function searchAdminAccountAttr($query,$value)

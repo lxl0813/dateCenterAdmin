@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controller;
 
 use app\validate\DataCenterLoginInValidate;
@@ -14,26 +15,26 @@ class IndexController extends RbacController
     public function __construct(App $app)
     {
         parent::__construct($app);
-        $this->admin_account  =   json_decode(Cookie::get('DATACENTER_ADMIN'),true);
+        $this->admin_account = json_decode(Cookie::get('DATACENTER_ADMIN'), true);
     }
 
     //首页框架
     public function index()
     {
 
-        return view('',['admin'=>$this->admin_account,'menu_list'=>$this->menu_list]);
+        return view('', ['admin' => $this->admin_account, 'menu_list' => $this->menu_list]);
     }
 
     //欢迎页面
     public function welcome()
     {
-        $count['fiber']['title']    =   '化纤行业库';
-        $count['fiber']['count']    =   $this->fiber_data();
-        $count['non']['title']      =   '无纺行业库';
-        $count['non']['count']      =   $this->nonwoven_data();
-        $count['products']['title'] =   '制品行业库';
-        $count['products']['count'] =   $this->product_data();
-        return view('',['admin'=>$this->admin_account,'count'=>$count]);
+        $count['fiber']['title'] = '化纤行业库';
+        $count['fiber']['count'] = $this->fiber_data();
+        $count['non']['title'] = '无纺行业库';
+        $count['non']['count'] = $this->nonwoven_data();
+        $count['products']['title'] = '制品行业库';
+        $count['products']['count'] = $this->product_data();
+        return view('', ['admin' => $this->admin_account, 'count' => $count]);
     }
 
     //化纤企业数据
@@ -59,7 +60,6 @@ class IndexController extends RbacController
 //    {
 //        return Db::connect('sharesMysql')->name('fiber_company')->count();
 //    }
-
 
 
 }
