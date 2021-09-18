@@ -142,7 +142,6 @@ class FormulaTaskController
         } else {
             $X = (int)ceil($S / exp($top2));
         }
-
         return $X;
     }
 

@@ -12,10 +12,10 @@ class RecursionService
     public function getCateOrder($data,$pid=0,$level=0){
         $cateOrder=[];
         foreach($data as $k=>$v){
-            if($v['ParentCode']==$pid){
+            if($v['parent_sn']==$pid){
                 $v['level']=$level;
                 $cateOrder[]=$v;
-                $cateOrder=array_merge($cateOrder,$this->getCateOrder($data,$v['Code'],$level+1));
+                $cateOrder=array_merge($cateOrder,$this->getCateOrder($data,$v['sn'],$level+1));
             }
         }
         return $cateOrder;

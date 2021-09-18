@@ -6,13 +6,15 @@ namespace app\controller;
 
 use app\model\CommonCityModel;
 use app\model\CompanyRegistNumsModel;
+use app\model\CompanyTypeModel;
 use app\model\FiberCompanyDetailTitleModel;
-use app\model\FiberCompanyInfoModel;
+use app\model\FiberIndustryCompanyModel;
 use app\model\FiberCompanyProductionTypeModel;
 use app\model\SystemSettingsModel;
 use app\Request;
 use app\service\ExcelService;
 use app\service\PdfService;
+use app\service\RandomStringService;
 use app\service\RecursionService;
 use think\Db;
 use think\exception\ValidateException;
@@ -34,7 +36,7 @@ class FiberCompanyController extends RbacController
         $production_type_id = $request->get("production_type_id", "");
         $regist_nums = $request->get("regist_nums", "");
         $city = $request->get("city", "");
-        $oper_name = $request->get("oper_name", "");
+        $legal_person = $request->get("legal_person", "");
         //查询条件
         $queryWhere = [];
         if ($company_name) {
@@ -50,8 +52,8 @@ class FiberCompanyController extends RbacController
             View::assign('production_type_id', $production_type_id);
         }
         if ($credit_code) {
-            $queryWhere['oper_name'] = array('eq', $oper_name);
-            View::assign('oper_name', $credit_code);
+            $queryWhere['legal_person'] = array('eq', $legal_person);
+            View::assign('legal_person', $credit_code);
         }
         if ($regist_nums) {
             $regist_nums_value = CompanyRegistNumsModel::find($regist_nums)->toArray();
@@ -71,16 +73,16 @@ class FiberCompanyController extends RbacController
         }
         //进行分页查询\获取分页配置
         $page = SystemSettingsModel::where('system_name', '分页设置')->value('system_value');
-        $fiber_company = FiberCompanyInfoModel::where($queryWhere)->paginate(['list_rows' => $page, 'query' => request()->param()]);
+        $fiber_company = FiberIndustryCompanyModel::where($queryWhere)->paginate(['list_rows' => $page, 'query' => request()->param()]);
         //获取企业生产类型
-        $product_type = FiberCompanyProductionTypeModel::withSearch(['fiber_company_production_type'], ['status' => 1])->select()->toArray();
+        $product_type = CompanyTypeModel::where(['parent_id'=>2])->select()->toArray();
         //读取注册资金范围
         $regist_nums = CompanyRegistNumsModel::order('order')->select()->toArray();
         //读取配置
         $citySystem = SystemSettingsModel::where('system_name', '省市联动级别')->value('system_value');
         //获取省市联动
         $cityModel = new CommonCityModel();
-        $city = $cityModel->where('AreaLevel', '<=', $citySystem)->select()->toArray();
+        $city = $cityModel->where('area_level', '<=', $citySystem)->select()->toArray();
         $tree = new RecursionService();
         $cityTree = $tree->getCateOrder($city);
         View::assign('product_type', $product_type);
@@ -180,7 +182,7 @@ class FiberCompanyController extends RbacController
      */
     public function fiber_company_add()
     {
-        $company_type = FiberCompanyProductionTypeModel::select()->toArray();
+        $company_type = CompanyTypeModel::where('parent_id',2)->select()->toArray();
         return \view('', ['com_pro_type' => $company_type]);
     }
 
@@ -192,7 +194,7 @@ class FiberCompanyController extends RbacController
     {
         $company_info = $request->post();
         try {
-            FiberCompanyInfoModel::insert($company_info);
+            FiberIndustryCompanyModel::insert($company_info);
             $this->resultSuccess('添加成功！');
         } catch (\ErrorException $e) {
             $this->resultError($e->getMessage());
@@ -205,10 +207,11 @@ class FiberCompanyController extends RbacController
      */
     public function fiber_company_edit(Request $request)
     {
+        //缺少企业信息修改页面
         $company_id = $request->get('id', '');
         //取企业生产分类
-        $company_type = FiberCompanyProductionTypeModel::select()->toArray();
-        $company_info = FiberCompanyInfoModel::find($company_id)->toArray();
+        $company_type = CompanyTypeModel::where('parent_id',2)->select()->toArray();
+        $company_info = FiberIndustryCompanyModel::find($company_id)->toArray();
         return \view('', ['company_info' => $company_info, 'com_pro_type' => $company_type]);
     }
 
@@ -220,7 +223,7 @@ class FiberCompanyController extends RbacController
     {
         $company_info = $request->post();
         try {
-            FiberCompanyInfoModel::insert($company_info);
+            FiberIndustryCompanyModel::insert($company_info);
             $this->resultSuccess('添加成功！');
         } catch (\ErrorException $e) {
             $this->resultError($e->getMessage());
@@ -245,8 +248,8 @@ class FiberCompanyController extends RbacController
         if (!empty($data['production_type_id'])) {
             $queryWhere['production_type_id'] = array('eq', $data['production_type_id']);
         }
-        if (!empty($data['oper_name'])) {
-            $queryWhere['oper_name'] = array('eq', $data['oper_name']);
+        if (!empty($data['legal_person'])) {
+            $queryWhere['legal_person'] = array('eq', $data['legal_person']);
         }
         if (!empty($data['regist_nums'])) {
             $data['start_num'] = explode('----', $data['regist_nums'])[0];
@@ -264,18 +267,18 @@ class FiberCompanyController extends RbacController
             }
         }
         //查询字段
-        $field = "company_name,oper_name,register_capi,phone,more_phone,email,more_email";
+        $field = "company_name,legal_person,register_capi,phone,more_phone,email,more_email";
         if ($data['action'] == 1) {
             if (empty($data['output_num'])) {
-                $company_list = FiberCompanyInfoModel::where($queryWhere)->field($field)->limit(500)->orderRaw("rand()")->select()->toArray();
+                $company_list = FiberIndustryCompanyModel::where($queryWhere)->field($field)->limit(500)->orderRaw("rand()")->select()->toArray();
             } else {
-                $company_list = FiberCompanyInfoModel::where($queryWhere)->field($field)->limit($data['output_num'])->orderRaw("rand()")->select()->toArray();
+                $company_list = FiberIndustryCompanyModel::where($queryWhere)->field($field)->limit($data['output_num'])->orderRaw("rand()")->select()->toArray();
             }
         } else {
             if (empty($data['output_num'])) {
-                $company_list = FiberCompanyInfoModel::where($queryWhere)->field($field)->limit(500)->select()->toArray();
+                $company_list = FiberIndustryCompanyModel::where($queryWhere)->field($field)->limit(500)->select()->toArray();
             } else {
-                $company_list = FiberCompanyInfoModel::where($queryWhere)->field($field)->limit($data['output_num'])->select()->toArray();
+                $company_list = FiberIndustryCompanyModel::where($queryWhere)->field($field)->limit($data['output_num'])->select()->toArray();
             }
         }
         $PDF = new PdfService();

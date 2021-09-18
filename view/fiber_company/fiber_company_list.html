@@ -50,7 +50,7 @@
                                     <select name="production_type_id">
                                         <option value="">生产类型</option>
                                         {foreach $product_type as $key=>$item}
-                                        <option value="{$item.id}">{$item.company_production_type}</option>
+                                        <option value="{$item.id}">{$item.type_name}</option>
                                         {/foreach}
                                     </select>
                                 </div>
@@ -66,11 +66,10 @@
                                     <select name="city">
                                         <option value="">所属省市区</option>
                                         {foreach $city_tree as $key=>$item}
-                                        <option value="{$item.Code}">{:str_repeat("　",$item.level)}{$item.AreaName}</option>
+                                        <option value="{$item.sn}">{:str_repeat("　",$item.level)}{$item.area_name}</option>
                                         {/foreach}
                                     </select>
                                 </div>
-
                                 <div class="layui-input-inline layui-show-xs-block">
                                     <input type="text" name="oper_name" placeholder="法人姓名" autocomplete="off" class="layui-input" style="width: 100px">
                                 </div>
@@ -85,7 +84,6 @@
                                         <option value="2">按序</option>
                                     </select>
                                 </div>
-
                                 <div class="layui-input-inline layui-show-xs-block">
                                     <button class="layui-btn"  lay-submit="" lay-filter="sreach">
                                         <i class="layui-icon">&#xe615;</i>
@@ -95,10 +93,9 @@
                                     </button>
                                 </div>
                             </form>
-
                         </div>
                         <div class="layui-card-header">
-                            <button class="layui-btn" onclick="xadmin.open('化纤企业添加','{:url("FiberCompany/fiber_company_add")}',1000,600)">
+                            <button class="layui-btn" onclick="xadmin.open('化纤企业添加','{:url("FiberCompany/fiber_company_add")}',500,800)">
                                 <i class="layui-icon">&#xe624;</i>添加
                             </button>
                             <button class="layui-btn" onclick="xadmin.open('化纤企业上传','{:url("FiberCompany/fiber_company_import")}',600,500)">
@@ -121,7 +118,7 @@
                                         <th style="min-width: auto">联系方式</th>
                                         <th style="min-width: auto">邮箱</th>
                                         <th style="min-width: auto">注册资金(万元人民币)</th>
-                                        <th style="min-width: auto">生产类型</th>
+<!--                                        <th style="min-width: auto">生产类型</th>-->
                                         <th style="min-width: auto">地址</th>
                                         <th style="min-width: auto">操作</th>
                                     </tr>
@@ -133,12 +130,12 @@
                                             <td style="min-width: auto">{$item.company_name}</td>
                                             <td style="min-width: auto">{$item.register_status}</td>
                                             <td style="min-width: auto">{$item.create_time}</td>
-                                            <td style="min-width: auto">{$item.oper_name}</td>
+                                            <td style="min-width: auto">{$item.legal_person}</td>
                                             <td style="min-width: auto">{$item.credit_code}</td>
                                             <td style="min-width: auto">{$item.phone}</td>
                                             <td style="min-width: auto">{$item.email}</td>
-                                            <td style="min-width: auto">{$item.register_capi}</td>
-                                            <td style="min-width: auto">{$item.keywords}</td>
+                                            <td style="min-width: auto">{$item.register_capital}</td>
+<!--                                            <td style="min-width: auto"></td>-->
                                             <td style="min-width: auto">{$item.province}{$item.city}{$item.area}</td>
                                             <td class="td-manage" style="min-width: auto">
                                                 <a title="查看" onclick="xadmin.open('股票详情','{:url('FiberCompany/fiber_company_detail',['id'=>$item.id])}')" href="javascript:;">

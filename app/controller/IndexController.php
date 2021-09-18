@@ -40,19 +40,19 @@ class IndexController extends RbacController
     //化纤企业数据
     public function fiber_data()
     {
-        return Db::connect('fiberMysql')->name('fiber_company_info')->count();
+        return Db::connect('companyMysql')->name('fiber_industry_company')->count();
     }
 
     //无纺企业数据
     public function nonwoven_data()
     {
-        return Db::connect('nonMysql')->name('non_company_info')->count();
+        return Db::connect('companyMysql')->name('non_industry_company')->count();
     }
 
     //制品企业数据
     public function product_data()
     {
-        return Db::connect('productsMysql')->name('company_info')->count();
+        return Db::connect('companyMysql')->name('products_industry_company')->count();
     }
 
 

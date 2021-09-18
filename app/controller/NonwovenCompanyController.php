@@ -6,7 +6,7 @@ namespace app\controller;
 
 use app\model\CommonCityModel;
 use app\model\CompanyRegistNumsModel;
-use app\model\FiberCompanyInfoModel;
+use app\model\FiberIndustryCompanyModel;
 use app\model\FiberCompanyProductionTypeModel;
 use app\model\SystemSettingsModel;
 use app\Request;
@@ -60,7 +60,7 @@ class NonwovenCompanyController extends RbacController
         //进行分页查询
         //获取分页配置
         $page = SystemSettingsModel::where('system_name', '分页设置')->value('system_value');
-        $non_company = FiberCompanyInfoModel::where($queryWhere)->paginate($page);
+        $non_company = FiberIndustryCompanyModel::where($queryWhere)->paginate($page);
 
 
         //获取企业生产类型
