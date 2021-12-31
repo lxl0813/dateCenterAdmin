@@ -115,6 +115,20 @@ class RecursionService
         return $subjectTree;
     }
 
+    public function nodes_recursion_son($nodes_list,$pid=0)
+    {
+        $nodes_arr=[];
+        foreach($nodes_list as $key=>$val){
+            if($val["parents_id"]==$pid){
+                if($son=$this->subject_tree($nodes_list,$val['id'])){
+                    $val["children"]=   $son;
+                }
+                $nodes_arr[]=$val;
+            }
+        }
+        return $nodes_arr;
+    }
+
 
     /**
      * 权限递归
@@ -132,19 +146,7 @@ class RecursionService
     }
 
 
-    public function nodes_recursion_son($nodes_list,$pid=0)
-    {
-        $nodes_arr=[];
-        foreach($nodes_list as $key=>$val){
-            if($val["parents_id"]==$pid){
-                if($son=$this->subject_tree($nodes_list,$val['id'])){
-                    $val["children"]=   $son;
-                }
-                $nodes_arr[]=$val;
-            }
-        }
-        return $nodes_arr;
-    }
+
 
 
     /**

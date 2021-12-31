@@ -7,6 +7,7 @@ use think\App;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Log;
+use think\validate\ValidateRule;
 
 class IndexController extends RbacController
 {
@@ -14,6 +15,7 @@ class IndexController extends RbacController
 
     public function __construct(App $app)
     {
+
         parent::__construct($app);
         $this->admin_account = json_decode(Cookie::get('DATACENTER_ADMIN'), true);
     }
@@ -21,7 +23,6 @@ class IndexController extends RbacController
     //首页框架
     public function index()
     {
-
         return view('', ['admin' => $this->admin_account, 'menu_list' => $this->menu_list]);
     }
 

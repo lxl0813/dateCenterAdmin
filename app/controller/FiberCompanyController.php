@@ -10,6 +10,7 @@ use app\model\CompanyTypeModel;
 use app\model\FiberCompanyDetailTitleModel;
 use app\model\FiberIndustryCompanyModel;
 use app\model\FiberCompanyProductionTypeModel;
+use app\model\NonIndustryCompanyModel;
 use app\model\SystemSettingsModel;
 use app\Request;
 use app\service\ExcelService;
@@ -30,6 +31,32 @@ class FiberCompanyController extends RbacController
      */
     public function fiber_company_list(Request $request)
     {
+
+//        //无纺企业库编码
+//        $model = new NonIndustryCompanyModel();
+//
+//        $count = $model->count();
+//
+//        $pagenum = ceil($count/30);
+//
+//        $code = new RandomStringService();
+//
+//        $city = new CommonCityModel();
+//
+//        for ($i=207 ; $i<=$pagenum ; $i++)
+//        {
+//            $company = $model->limit($i*30,30)->field('id,province_code')->select()->toArray();
+//            foreach ($company as $key=>$item)
+//            {
+//                $new_company[$key]['id'] = $item['id'];
+//                $new_company[$key]['company_code'] = "RL-01-".$item['province_code']."-".$code->getRandomString(8);
+//                //$new_company[$key]['province_code'] = $city->where('area_name',$item['province'])->value('code');
+//            }
+//            $model->saveAll($new_company);
+//        }
+//        exit;
+
+
         //获取查询条件，如果全部为空，则利用默认条件进行查询分页
         $company_name = $request->get("company_name", "");
         $credit_code = $request->get("credit_code", "");
@@ -75,7 +102,7 @@ class FiberCompanyController extends RbacController
         $page = SystemSettingsModel::where('system_name', '分页设置')->value('system_value');
         $fiber_company = FiberIndustryCompanyModel::where($queryWhere)->paginate(['list_rows' => $page, 'query' => request()->param()]);
         //获取企业生产类型
-        $product_type = CompanyTypeModel::where(['parent_id'=>2])->select()->toArray();
+        $product_type = CompanyTypeModel::where(['parent_id' => 2])->select()->toArray();
         //读取注册资金范围
         $regist_nums = CompanyRegistNumsModel::order('order')->select()->toArray();
         //读取配置
@@ -105,8 +132,8 @@ class FiberCompanyController extends RbacController
 
     public function fiber_company_import_do(Request $request)
     {
-        echo 123;
-        exit;
+        //echo 123;
+        //exit;
         $keywords = $request->post('product_type');
         $product_type_id = $request->post('product_type_id');
         $files = request()->file('file');
@@ -182,7 +209,7 @@ class FiberCompanyController extends RbacController
      */
     public function fiber_company_add()
     {
-        $company_type = CompanyTypeModel::where('parent_id',2)->select()->toArray();
+        $company_type = CompanyTypeModel::where('parent_id', 2)->select()->toArray();
         return \view('', ['com_pro_type' => $company_type]);
     }
 
@@ -210,7 +237,7 @@ class FiberCompanyController extends RbacController
         //缺少企业信息修改页面
         $company_id = $request->get('id', '');
         //取企业生产分类
-        $company_type = CompanyTypeModel::where('parent_id',2)->select()->toArray();
+        $company_type = CompanyTypeModel::where('parent_id', 2)->select()->toArray();
         $company_info = FiberIndustryCompanyModel::find($company_id)->toArray();
         return \view('', ['company_info' => $company_info, 'com_pro_type' => $company_type]);
     }

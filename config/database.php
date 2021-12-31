@@ -55,7 +55,6 @@ return [
             'fields_cache'    => false,
         ],
 
-
         //化纤行业数据库
         'companyMysql' => [
             // 数据库类型
@@ -93,7 +92,6 @@ return [
             // 开启字段缓存
             'fields_cache'    => false,
         ],
-
 
         //股票数据库
         'sharesMysql' => [

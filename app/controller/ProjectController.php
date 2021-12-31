@@ -12,7 +12,7 @@ use think\facade\Db;
 
 class ProjectController extends RbacController
 {
-    //项目Model
+
     private $Project;
 
     public function __construct(App $app)
@@ -93,11 +93,10 @@ class ProjectController extends RbacController
                 $k->paid_money = 0;
                 //应收
                 $k->deal_money = 0;
+
             }
             //项目金额单位转换成元
             $k->project_money = $k['project_money'] / 100;
-
-
         });
         return view('', ['project_list' => $project_list]);
     }
@@ -111,7 +110,6 @@ class ProjectController extends RbacController
         $id = (int)$request->param('id');
         $project_arr = $this->Project->where('id', $id)->find()->toArray();
         $project_arr['project_water'] = Db::connect('financeMysql')->name('rl_finance_water')->where('project_id', $id)->select()->toArray();
-
         if (!empty($project_arr['project_water'])) {
             if (empty($project_arr['project_water']['water_pay'])) {
                 //已收金额
@@ -125,7 +123,6 @@ class ProjectController extends RbacController
                 $project_arr['deal_money'] = ($project_arr['project_money'] - $project_arr['paid_money'] * 100) / 100;
             }
         }
-
         return view('', ['project_arr' => $project_arr]);
     }
 
